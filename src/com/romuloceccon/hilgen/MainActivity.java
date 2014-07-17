@@ -1,6 +1,5 @@
 package com.romuloceccon.hilgen;
 
-import com.googlecode.flickrjandroid.Flickr;
 import com.googlecode.flickrjandroid.people.User;
 
 import android.app.Activity;
@@ -14,8 +13,6 @@ public class MainActivity extends Activity
 {
     private static final String TAG = "HILGen";
     private static final String SCHEME = "com-romuloceccon-hilgen";
-    
-    private static Flickr flickrInstance = null;
     
     private Authentication authentication;
     
@@ -56,7 +53,7 @@ public class MainActivity extends Activity
         setContentView(R.layout.activity_main);
         
         authentication = Authentication.getInstance(getApplicationContext(),
-                getFlickr());
+                FlickrHelper.getFlickr());
         
         if (authentication.getState() == Authentication.UNAUTHORIZED)
             new OAuthStartAuthenticationTask().execute();
@@ -111,14 +108,5 @@ public class MainActivity extends Activity
         String verifier = data[1].substring(data[1].indexOf("=") + 1);
         
         new OAuthFinishAuthenticationTask().execute(token, verifier);
-    }
-    
-    private Flickr getFlickr()
-    {
-        if (flickrInstance == null)
-            flickrInstance = new Flickr("5448446a4bf6e01575a04886bb481d61",
-                    "7230d66b6e1ed0c6");
-        
-        return flickrInstance;
     }
 }
