@@ -13,7 +13,7 @@ import android.util.Log;
 public class MainActivity extends Activity
 {
     private static final String TAG = "HILGen";
-    private static final String SCHEME = "hilgen";
+    private static final String SCHEME = "com-romuloceccon-hilgen";
     
     private static Flickr flickrInstance = null;
     
