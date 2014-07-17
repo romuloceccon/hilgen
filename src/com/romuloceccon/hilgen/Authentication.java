@@ -215,5 +215,6 @@ public class Authentication
         this.state = state;
         this.oAuthTokenSecret = oAuthTokenSecret;
         this.oAuth = oAuth;
+        FlickrHelper.setOAuth(oAuth);
     }
 }

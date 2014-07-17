@@ -1,6 +1,9 @@
 package com.romuloceccon.hilgen;
 
 import com.googlecode.flickrjandroid.Flickr;
+import com.googlecode.flickrjandroid.RequestContext;
+import com.googlecode.flickrjandroid.oauth.OAuth;
+import com.googlecode.flickrjandroid.oauth.OAuthToken;
 
 public class FlickrHelper
 {
@@ -13,5 +16,22 @@ public class FlickrHelper
                     "7230d66b6e1ed0c6");
         
         return instance;
+    }
+    
+    public static synchronized void setOAuth(OAuth oAuth)
+    {
+        RequestContext requestContext = RequestContext.getRequestContext();
+        
+        if (oAuth == null)
+        {
+            requestContext.setOAuth(null);
+            return;
+        }
+        
+        OAuthToken oAuthToken = oAuth.getToken();
+        OAuth copy = new OAuth();
+        copy.setToken(new OAuthToken(oAuthToken.getOauthToken(),
+                oAuthToken.getOauthTokenSecret()));
+        requestContext.setOAuth(copy);
     }
 }
