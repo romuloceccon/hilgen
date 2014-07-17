@@ -1,26 +1,31 @@
 package com.romuloceccon.hilgen;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.json.JSONException;
 
 import com.googlecode.flickrjandroid.FlickrException;
 import com.googlecode.flickrjandroid.oauth.OAuth;
-import com.googlecode.flickrjandroid.photos.Photo;
-import com.googlecode.flickrjandroid.photos.PhotoList;
 import com.googlecode.flickrjandroid.photosets.Photoset;
 import com.googlecode.flickrjandroid.photosets.PhotosetsInterface;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +40,10 @@ public class MainActivity extends Activity
     private TextView textView;
     
     private Button buttonGetPhotosets;
+    private ListView listView;
+    
+    private BaseAdapter photosetsAdapter;
+    private List<Photoset> photosets = new ArrayList<Photoset>();
     
     private class OAuthStartAuthenticationTask extends AsyncTask<Void, Integer, String>
     {
@@ -79,16 +88,17 @@ public class MainActivity extends Activity
         }
     }
     
-    private class GetPhotosetsTask extends AsyncTask<Void, Integer, Boolean>
+    private class GetPhotosetsTask extends AsyncTask<Void, Integer, List<Photoset>>
     {
         @Override
-        protected Boolean doInBackground(Void... arg0)
+        protected List<Photoset> doInBackground(Void... arg0)
         {
-            PhotosetsInterface intf = FlickrHelper.getFlickr().getPhotosetsInterface();
-            
             OAuth oAuth = authentication.getOAuth();
             if (oAuth == null)
-                return false;
+                return null;
+            
+            List<Photoset> result = new ArrayList<Photoset>();
+            PhotosetsInterface intf = FlickrHelper.getFlickr().getPhotosetsInterface();
             
             try
             {
@@ -110,58 +120,73 @@ public class MainActivity extends Activity
                     }
                     
                     for (Photoset p: photosets)
-                        dumpPhotoset(intf, p);
+                        result.add(p);
                     page += 1;
                 } while (photosets.size() >= perPage);
                 
-                return true;
+                return result;
             }
             catch (IOException e)
             {
                 Log.w(TAG, e);
-                return false;
+                return null;
             }
             catch (FlickrException e)
             {
                 Log.w(TAG, e);
-                return false;
+                return null;
             }
             catch (JSONException e)
             {
                 Log.w(TAG, e);
-                return false;
+                return null;
             }
         }
         
-        private void dumpPhotoset(PhotosetsInterface intf, Photoset photoset)
-                throws IOException, FlickrException, JSONException
+        @Override
+        protected void onPostExecute(List<Photoset> result)
         {
-            Log.i(TAG, String.format("Photoset %s: %s", photoset.getId(), photoset.getTitle()));
+            if (result == null)
+                showToast(getString(R.string.message_get_photosets_failed));
             
-            PhotoList photos;
-            int page = 1;
-            final int perPage = 10;
-            
-            do
+            updatePhotosetList(result);
+        }
+    }
+    
+    public class Adapter extends BaseAdapter
+    {
+        @Override
+        public int getCount()
+        {
+            return photosets.size();
+        }
+
+        @Override
+        public Object getItem(int pos)
+        {
+            return photosets.get(pos);
+        }
+
+        @Override
+        public long getItemId(int arg0)
+        {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent)
+        {
+            View result = convertView;
+            if (result == null)
             {
-                Log.i(TAG, String.format("Getting page %d of set %s...", page, photoset.getId()));
-                
-                try
-                {
-                    photos = intf.getPhotos(photoset.getId(), perPage, page).getPhotoList();
-                }
-                catch (FlickrException e)
-                {
-                    if (e.getErrorCode().compareTo("1") == 0) // empty page
-                        break;
-                    throw e;
-                }
-                
-                for (Photo p: photos)
-                    Log.i(TAG, String.format("  Photo %s: %s", p.getId(), p.getMediumUrl()));
-                
-                page += 1;
-            } while (photos.size() >= perPage);
+                LayoutInflater li = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                result = li.inflate(R.layout.listview_photoset, parent, false);
+            }
+            
+            TextView tv = (TextView) result.findViewById(R.id.item);
+            tv.setText(photosets.get(position).getTitle());
+            
+            return result;
         }
     }
     
@@ -179,6 +204,10 @@ public class MainActivity extends Activity
         
         buttonGetPhotosets = (Button) findViewById(R.id.button_get_photosets);
         buttonGetPhotosets.setOnClickListener(buttonGetPhotosetsListener);
+        
+        photosetsAdapter = new Adapter();
+        listView = (ListView) findViewById(R.id.listview_photosets);
+        listView.setAdapter(photosetsAdapter);
         
         updateState();
     }
@@ -221,12 +250,12 @@ public class MainActivity extends Activity
         return q.substring(q.indexOf("=") + 1);
     }
     
-    void showToast(CharSequence msg)
+    private void showToast(CharSequence msg)
     {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
     
-    void updateState()
+    private void updateState()
     {
         switch (authentication.getState())
         {
@@ -246,6 +275,14 @@ public class MainActivity extends Activity
             textView.setText(getString(R.string.text_logged_out));
             break;
         }
+    }
+    
+    private void updatePhotosetList(List<Photoset> list)
+    {
+        photosets.clear();
+        if (list != null)
+            photosets.addAll(list);
+        photosetsAdapter.notifyDataSetChanged();
     }
     
     private OnClickListener startAuthenticationAction = new OnClickListener()
