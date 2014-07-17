@@ -2,6 +2,16 @@
 <resources>
 
     <string name="app_name">HILGen</string>
-    <string name="hello_world">Hello world!</string>
 
+    <string name="button_start_authentication">Start authentication</string>
+    <string name="button_cancel_authentication">Cancel authentication</string>
+    <string name="button_logout">Logout</string>
+    
+    <string name="text_logged_out">Logged out</string>
+    <string name="text_waiting_authentication">Waiting authentication&#8230;</string>
+    <string name="text_logged_in">Logged in as: %1$s</string>
+    
+    <string name="message_start_authentication_failed">Could not start OAuth authentication</string>
+    <string name="message_finish_authentication_failed">Could not finish OAuth authentication</string>
+    
 </resources>

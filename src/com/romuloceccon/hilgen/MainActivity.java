@@ -1,13 +1,16 @@
 package com.romuloceccon.hilgen;
 
-import com.googlecode.flickrjandroid.people.User;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends Activity
 {
@@ -15,6 +18,9 @@ public class MainActivity extends Activity
     private static final String SCHEME = "com-romuloceccon-hilgen";
     
     private Authentication authentication;
+    
+    private Button button;
+    private TextView textView;
     
     private class OAuthStartAuthenticationTask extends AsyncTask<Void, Integer, String>
     {
@@ -27,7 +33,14 @@ public class MainActivity extends Activity
         @Override
         protected void onPostExecute(String result)
         {
+            if (result == null)
+            {
+                showToast(getString(R.string.message_start_authentication_failed));
+                return;
+            }
+            
             redirectUserTo(result);
+            updateState();
         }
     }
     
@@ -42,7 +55,13 @@ public class MainActivity extends Activity
         @Override
         protected void onPostExecute(Boolean result)
         {
-            Log.i(TAG, result ? "OAuth success" : "OAuth failure");
+            if (!result)
+            {
+                showToast(getString(R.string.message_finish_authentication_failed));
+                return;
+            }
+            
+            updateState();
         }
     }
     
@@ -55,8 +74,10 @@ public class MainActivity extends Activity
         authentication = Authentication.getInstance(getApplicationContext(),
                 FlickrHelper.getFlickr());
         
-        if (authentication.getState() == Authentication.UNAUTHORIZED)
-            new OAuthStartAuthenticationTask().execute();
+        button = (Button) findViewById(R.id.button_action);
+        textView = (TextView) findViewById(R.id.text_state);
+        
+        updateState();
     }
     
     @Override
@@ -68,27 +89,11 @@ public class MainActivity extends Activity
         String scheme = intent.getScheme();
 
         if (scheme != null && scheme.compareTo(SCHEME) == 0)
-        {
             handleFlickrCallback(intent);
-            return;
-        }
-        
-        if (authentication.getState() == Authentication.AUTHORIZED)
-        {
-            User user = authentication.getOAuth().getUser();
-            Log.i(TAG, String.format("Current logged in user: %s (%s)",
-                    user.getUsername(), user.getId()));
-        }
     }
     
     private void redirectUserTo(String url)
     {
-        if (url == null)
-        {
-            Log.w(TAG, "Could not build authentication url");
-            return;
-        }
-        
         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
     }
     
@@ -109,4 +114,50 @@ public class MainActivity extends Activity
         
         new OAuthFinishAuthenticationTask().execute(token, verifier);
     }
+    
+    void showToast(CharSequence msg)
+    {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    }
+    
+    void updateState()
+    {
+        switch (authentication.getState())
+        {
+        case Authentication.AUTHORIZED:
+            button.setText(getString(R.string.button_logout));
+            button.setOnClickListener(logoutAction);
+            textView.setText(getString(R.string.text_logged_in, authentication.getOAuth().getUser().getUsername()));
+            break;
+        case Authentication.REQUESTING_AUTHORIZATION:
+            button.setText(getString(R.string.button_cancel_authentication));
+            button.setOnClickListener(logoutAction);
+            textView.setText(getString(R.string.text_waiting_authentication));
+            break;
+        default:
+            button.setText(getString(R.string.button_start_authentication));
+            button.setOnClickListener(startAuthenticationAction);
+            textView.setText(getString(R.string.text_logged_out));
+            break;
+        }
+    }
+    
+    private OnClickListener startAuthenticationAction = new OnClickListener()
+    {
+        @Override
+        public void onClick(View arg0)
+        {
+            new OAuthStartAuthenticationTask().execute();
+        }
+    };
+    
+    private OnClickListener logoutAction = new OnClickListener()
+    {
+        @Override
+        public void onClick(View arg0)
+        {
+            authentication.logout();
+            updateState();
+        }
+    };
 }

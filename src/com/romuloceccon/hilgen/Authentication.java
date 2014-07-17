@@ -161,6 +161,20 @@ public class Authentication
         return true;
     }
     
+    public boolean logout()
+    {
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.remove(KEY_STATE);
+        editor.remove(KEY_USER_NAME);
+        editor.remove(KEY_USER_ID);
+        editor.remove(KEY_TOKEN);
+        editor.remove(KEY_TOKEN_SECRET);
+        if (!editor.commit())
+            return false;
+        setVariables(UNAUTHORIZED, null, null);
+        return true;
+    }
+    
     private void loadState()
     {
         switch (prefs.getInt(KEY_STATE, 0))
