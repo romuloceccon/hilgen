@@ -74,8 +74,8 @@ public class MainActivity extends Activity
         authentication = Authentication.getInstance(getApplicationContext(),
                 FlickrHelper.getFlickr());
         
-        button = (Button) findViewById(R.id.button_action);
-        textView = (TextView) findViewById(R.id.text_state);
+        button = (Button) findViewById(R.id.button_login);
+        textView = (TextView) findViewById(R.id.text_login);
         
         updateState();
     }
