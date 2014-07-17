@@ -7,6 +7,8 @@ import org.json.JSONException;
 
 import com.googlecode.flickrjandroid.FlickrException;
 import com.googlecode.flickrjandroid.oauth.OAuth;
+import com.googlecode.flickrjandroid.photos.Photo;
+import com.googlecode.flickrjandroid.photos.PhotoList;
 import com.googlecode.flickrjandroid.photosets.Photoset;
 import com.googlecode.flickrjandroid.photosets.PhotosetsInterface;
 
@@ -96,9 +98,19 @@ public class MainActivity extends Activity
                 
                 do
                 {
-                    photosets = intf.getList(oAuth.getUser().getId(), perPage, page).getPhotosets();
+                    try
+                    {
+                        photosets = intf.getList(oAuth.getUser().getId(), perPage, page).getPhotosets();
+                    }
+                    catch (FlickrException e)
+                    {
+                        if (e.getErrorCode().compareTo("1") == 0) // empty page
+                            break;
+                        throw e;
+                    }
+                    
                     for (Photoset p: photosets)
-                        Log.i(TAG, String.format("Photoset %s: %s", p.getId(), p.getTitle()));
+                        dumpPhotoset(intf, p);
                     page += 1;
                 } while (photosets.size() >= perPage);
                 
@@ -119,6 +131,37 @@ public class MainActivity extends Activity
                 Log.w(TAG, e);
                 return false;
             }
+        }
+        
+        private void dumpPhotoset(PhotosetsInterface intf, Photoset photoset)
+                throws IOException, FlickrException, JSONException
+        {
+            Log.i(TAG, String.format("Photoset %s: %s", photoset.getId(), photoset.getTitle()));
+            
+            PhotoList photos;
+            int page = 1;
+            final int perPage = 10;
+            
+            do
+            {
+                Log.i(TAG, String.format("Getting page %d of set %s...", page, photoset.getId()));
+                
+                try
+                {
+                    photos = intf.getPhotos(photoset.getId(), perPage, page).getPhotoList();
+                }
+                catch (FlickrException e)
+                {
+                    if (e.getErrorCode().compareTo("1") == 0) // empty page
+                        break;
+                    throw e;
+                }
+                
+                for (Photo p: photos)
+                    Log.i(TAG, String.format("  Photo %s: %s", p.getId(), p.getMediumUrl()));
+                
+                page += 1;
+            } while (photos.size() >= perPage);
         }
     }
     
