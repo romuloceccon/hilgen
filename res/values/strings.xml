@@ -6,6 +6,7 @@
     <string name="button_start_authentication">Start authentication</string>
     <string name="button_cancel_authentication">Cancel authentication</string>
     <string name="button_logout">Logout</string>
+    <string name="button_get_photosets">Get photosets</string>
     
     <string name="text_logged_out">Logged out</string>
     <string name="text_waiting_authentication">Waiting authentication&#8230;</string>

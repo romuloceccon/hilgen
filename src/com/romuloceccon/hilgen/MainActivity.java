@@ -1,5 +1,15 @@
 package com.romuloceccon.hilgen;
 
+import java.io.IOException;
+import java.util.Collection;
+
+import org.json.JSONException;
+
+import com.googlecode.flickrjandroid.FlickrException;
+import com.googlecode.flickrjandroid.oauth.OAuth;
+import com.googlecode.flickrjandroid.photosets.Photoset;
+import com.googlecode.flickrjandroid.photosets.PhotosetsInterface;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -21,6 +31,8 @@ public class MainActivity extends Activity
     
     private Button button;
     private TextView textView;
+    
+    private Button buttonGetPhotosets;
     
     private class OAuthStartAuthenticationTask extends AsyncTask<Void, Integer, String>
     {
@@ -65,6 +77,51 @@ public class MainActivity extends Activity
         }
     }
     
+    private class GetPhotosetsTask extends AsyncTask<Void, Integer, Boolean>
+    {
+        @Override
+        protected Boolean doInBackground(Void... arg0)
+        {
+            PhotosetsInterface intf = FlickrHelper.getFlickr().getPhotosetsInterface();
+            
+            OAuth oAuth = authentication.getOAuth();
+            if (oAuth == null)
+                return false;
+            
+            try
+            {
+                Collection<Photoset> photosets;
+                int page = 1;
+                final int perPage = 10;
+                
+                do
+                {
+                    photosets = intf.getList(oAuth.getUser().getId(), perPage, page).getPhotosets();
+                    for (Photoset p: photosets)
+                        Log.i(TAG, String.format("Photoset %s: %s", p.getId(), p.getTitle()));
+                    page += 1;
+                } while (photosets.size() >= perPage);
+                
+                return true;
+            }
+            catch (IOException e)
+            {
+                Log.w(TAG, e);
+                return false;
+            }
+            catch (FlickrException e)
+            {
+                Log.w(TAG, e);
+                return false;
+            }
+            catch (JSONException e)
+            {
+                Log.w(TAG, e);
+                return false;
+            }
+        }
+    }
+    
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -76,6 +133,9 @@ public class MainActivity extends Activity
         
         button = (Button) findViewById(R.id.button_login);
         textView = (TextView) findViewById(R.id.text_login);
+        
+        buttonGetPhotosets = (Button) findViewById(R.id.button_get_photosets);
+        buttonGetPhotosets.setOnClickListener(buttonGetPhotosetsListener);
         
         updateState();
     }
@@ -161,6 +221,15 @@ public class MainActivity extends Activity
         {
             authentication.logout();
             updateState();
+        }
+    };
+    
+    private OnClickListener buttonGetPhotosetsListener = new OnClickListener()
+    {
+        @Override
+        public void onClick(View v)
+        {
+            new GetPhotosetsTask().execute();
         }
     };
 }
