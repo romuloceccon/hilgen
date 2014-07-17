@@ -25,12 +25,13 @@ public class MainActivity extends Activity
 {
     private static final String TAG = "HILGen";
     private static final String SCHEME = "hilgen";
-    private static final String PREFS = "hilgen";
     
-    private static final String KEY_OAUTH_USER_NAME = "oauth_user_name";
-    private static final String KEY_OAUTH_USER_ID= "oauth_user_id";
-    private static final String KEY_OAUTH_TOKEN = "oauth_token";
-    private static final String KEY_OAUTH_TOKEN_SECRET = "oauth_token_secret";
+    private static final String OAUTH_PREFS = "oauth";
+    
+    private static final String KEY_USER_NAME = "user_name";
+    private static final String KEY_USER_ID= "user_id";
+    private static final String KEY_TOKEN = "token";
+    private static final String KEY_TOKEN_SECRET = "token_secret";
     
     private static Flickr flickrInstance = null;
     
@@ -160,13 +161,13 @@ public class MainActivity extends Activity
     private void saveOAuth(String userName, String userId, String token,
             String tokenSecret)
     {
-        SharedPreferences.Editor editor = getSharedPreferences(PREFS,
+        SharedPreferences.Editor editor = getSharedPreferences(OAUTH_PREFS,
                 Context.MODE_PRIVATE).edit();
         
-        editor.putString(KEY_OAUTH_USER_NAME, userName);
-        editor.putString(KEY_OAUTH_USER_ID, userId);
-        editor.putString(KEY_OAUTH_TOKEN, token);
-        editor.putString(KEY_OAUTH_TOKEN_SECRET, tokenSecret);
+        editor.putString(KEY_USER_NAME, userName);
+        editor.putString(KEY_USER_ID, userId);
+        editor.putString(KEY_TOKEN, token);
+        editor.putString(KEY_TOKEN_SECRET, tokenSecret);
         editor.commit();
         
         Log.i(TAG, String.format("SAVED TOKEN: %s, %s, %s, %s", userName,
@@ -207,13 +208,13 @@ public class MainActivity extends Activity
     
     private OAuth loadOAuth()
     {
-        SharedPreferences prefs = getSharedPreferences(PREFS,
+        SharedPreferences prefs = getSharedPreferences(OAUTH_PREFS,
                 Context.MODE_PRIVATE);
         
-        String userName = prefs.getString(KEY_OAUTH_USER_NAME, null);
-        String userId = prefs.getString(KEY_OAUTH_USER_ID, null);
-        String token = prefs.getString(KEY_OAUTH_TOKEN, null);
-        String tokenSecret = prefs.getString(KEY_OAUTH_TOKEN_SECRET, null);
+        String userName = prefs.getString(KEY_USER_NAME, null);
+        String userId = prefs.getString(KEY_USER_ID, null);
+        String token = prefs.getString(KEY_TOKEN, null);
+        String tokenSecret = prefs.getString(KEY_TOKEN_SECRET, null);
         
         OAuth result = new OAuth();
         
