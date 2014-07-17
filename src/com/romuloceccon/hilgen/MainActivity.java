@@ -109,10 +109,13 @@ public class MainActivity extends Activity
             return;
         }
         
-        String token = data[0].substring(data[0].indexOf("=") + 1);
-        String verifier = data[1].substring(data[1].indexOf("=") + 1);
-        
-        new OAuthFinishAuthenticationTask().execute(token, verifier);
+        new OAuthFinishAuthenticationTask().execute(
+                getDataValue(data[0]), getDataValue(data[1]));
+    }
+    
+    private String getDataValue(String q)
+    {
+        return q.substring(q.indexOf("=") + 1);
     }
     
     void showToast(CharSequence msg)
