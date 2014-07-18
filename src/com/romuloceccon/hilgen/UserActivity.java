@@ -30,7 +30,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends Activity
+public class UserActivity extends Activity
 {
     private static final String TAG = "HILGen";
     private static final String SCHEME = "com-romuloceccon-hilgen";
@@ -195,7 +195,7 @@ public class MainActivity extends Activity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_user);
         
         authentication = Authentication.getInstance(getApplicationContext(),
                 FlickrHelper.getFlickr());
