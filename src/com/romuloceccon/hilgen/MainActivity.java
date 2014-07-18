@@ -23,6 +23,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -180,7 +181,7 @@ public class MainActivity extends Activity
             if (result == null)
             {
                 LayoutInflater li = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                result = li.inflate(R.layout.listview_photoset, parent, false);
+                result = li.inflate(R.layout.listview_item, parent, false);
             }
             
             TextView tv = (TextView) result.findViewById(R.id.item);
@@ -208,6 +209,8 @@ public class MainActivity extends Activity
         photosetsAdapter = new Adapter();
         listView = (ListView) findViewById(R.id.listview_photosets);
         listView.setAdapter(photosetsAdapter);
+        listView.setClickable(true);
+        listView.setOnItemClickListener(listViewClickListener);
         
         updateState();
     }
@@ -285,6 +288,13 @@ public class MainActivity extends Activity
         photosetsAdapter.notifyDataSetChanged();
     }
     
+    private void showPhotoset(Photoset photoset)
+    {
+        Intent intent = new Intent(getApplicationContext(), PhotosetActivity.class);
+        intent.putExtra(PhotosetActivity.KEY_PHOTOSET, photoset);
+        startActivity(intent);
+    }
+    
     private OnClickListener startAuthenticationAction = new OnClickListener()
     {
         @Override
@@ -310,6 +320,17 @@ public class MainActivity extends Activity
         public void onClick(View v)
         {
             new GetPhotosetsTask().execute();
+        }
+    };
+    
+    private AdapterView.OnItemClickListener listViewClickListener =
+            new AdapterView.OnItemClickListener()
+    {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position,
+                long id)
+        {
+            showPhotoset(photosets.get(position));
         }
     };
 }

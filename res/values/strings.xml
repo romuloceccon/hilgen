@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">HILGen</string>
-
+    
     <string name="button_start_authentication">Start authentication</string>
     <string name="button_cancel_authentication">Cancel authentication</string>
     <string name="button_logout">Logout</string>
@@ -16,4 +16,6 @@
     <string name="message_finish_authentication_failed">Could not finish OAuth authentication</string>
     <string name="message_get_photosets_failed">Could not list photosets</string>
     
+    <string name="title_activity_photoset">Photoset %1$s: %2$s</string>
+
 </resources>
