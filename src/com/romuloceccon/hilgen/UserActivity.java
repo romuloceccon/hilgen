@@ -99,6 +99,8 @@ public class UserActivity extends Activity
             if (oAuth == null)
                 return null;
             
+            FlickrHelper.setOAuth(oAuth);
+            
             List<Photoset> result = new ArrayList<Photoset>();
             PhotosetsInterface intf = FlickrHelper.getFlickr().getPhotosetsInterface();
             

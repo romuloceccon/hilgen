@@ -8,6 +8,7 @@ import org.json.JSONException;
 
 import com.googlecode.flickrjandroid.Flickr;
 import com.googlecode.flickrjandroid.FlickrException;
+import com.googlecode.flickrjandroid.oauth.OAuth;
 import com.googlecode.flickrjandroid.photos.Photo;
 import com.googlecode.flickrjandroid.photos.PhotoList;
 import com.googlecode.flickrjandroid.photos.PhotosInterface;
@@ -32,6 +33,8 @@ public class PhotosetActivity extends Activity
     
     public static final String KEY_PHOTOSET = "photoset";
     
+    private Authentication authentication;
+    
     private Button buttonGetPhotos;
     private TextView textPhotos;
     private TextView textProgress;
@@ -43,6 +46,12 @@ public class PhotosetActivity extends Activity
         @Override
         protected List<Photo> doInBackground(Void... params)
         {
+            OAuth oAuth = authentication.getOAuth();
+            if (oAuth == null)
+                return null;
+            
+            FlickrHelper.setOAuth(oAuth);
+            
             List<Photo> result = new ArrayList<Photo>();
             
             Flickr f = FlickrHelper.getFlickr();
@@ -133,6 +142,9 @@ public class PhotosetActivity extends Activity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photoset);
+        
+        authentication = Authentication.getInstance(getApplicationContext(),
+                FlickrHelper.getFlickr());
         
         buttonGetPhotos = (Button) findViewById(R.id.button_get_photos);
         textPhotos = (TextView) findViewById(R.id.text_photos);
