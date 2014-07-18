@@ -18,6 +18,8 @@
     <string name="message_get_photosets_failed">Could not list photosets</string>
     <string name="message_get_photos_failed">Could not list photos</string>
     
+    <string name="progress_get_photos">Photos fetched: %1$d</string>
+    
     <string name="label_clip_data_photo_list">HTML image list</string>
     
     <string name="clipboard_text_set">Text copied to clipboard</string>

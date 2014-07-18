@@ -34,6 +34,7 @@ public class PhotosetActivity extends Activity
     
     private Button buttonGetPhotos;
     private TextView textPhotos;
+    private TextView textProgress;
     
     private Photoset photoset;
     
@@ -50,6 +51,7 @@ public class PhotosetActivity extends Activity
             
             PhotoList photos;
             int page = 1;
+            int count = 0;
             final int perPage = 10;
             
             try
@@ -69,10 +71,11 @@ public class PhotosetActivity extends Activity
                     
                     for (Photo t: photos)
                     {
-                        Log.d(TAG, "Getting photo " + t.getId());
                         Photo p = photosIntf.getPhoto(t.getId());
                         p.setSizes(photosIntf.getSizes(t.getId()));
                         result.add(p);
+                        
+                        publishProgress(++count);
                     }
                     
                     page += 1;
@@ -104,6 +107,13 @@ public class PhotosetActivity extends Activity
                 showToast(getString(R.string.message_get_photos_failed));
             
             updatePhotosText(result);
+            updateProgress(null);
+        }
+        
+        @Override
+        protected void onProgressUpdate(Integer... values)
+        {
+            updateProgress(values[0]);
         }
     }
     
@@ -115,6 +125,7 @@ public class PhotosetActivity extends Activity
         
         buttonGetPhotos = (Button) findViewById(R.id.button_get_photos);
         textPhotos = (TextView) findViewById(R.id.text_photos);
+        textProgress = (TextView) findViewById(R.id.text_progress);
         
         Bundle extras = getIntent().getExtras();
         photoset = (Photoset) extras.getSerializable(KEY_PHOTOSET);
@@ -174,6 +185,12 @@ public class PhotosetActivity extends Activity
                 getString(R.string.label_clip_data_photo_list), text));
         
         showToast(getString(R.string.clipboard_text_set));
+    }
+    
+    private void updateProgress(Integer count)
+    {
+        textProgress.setVisibility(count == null ? View.GONE : View.VISIBLE);
+        textProgress.setText(count == null ? "" : getString(R.string.progress_get_photos, count));
     }
     
     private void showToast(CharSequence msg)
