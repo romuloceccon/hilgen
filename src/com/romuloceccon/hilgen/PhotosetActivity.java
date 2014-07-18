@@ -72,7 +72,18 @@ public class PhotosetActivity extends Activity
                     for (Photo t: photos)
                     {
                         Photo p = photosIntf.getPhoto(t.getId());
-                        p.setSizes(photosIntf.getSizes(t.getId()));
+                        
+                        try
+                        {
+                            p.setSizes(photosIntf.getSizes(t.getId()));
+                        }
+                        catch (FlickrException e)
+                        {
+                            // getSizes fails for private photos
+                            if (e.getErrorCode().compareTo("1") != 0)
+                                throw e;
+                        }
+                        
                         result.add(p);
                         
                         publishProgress(++count);
