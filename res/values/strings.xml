@@ -7,6 +7,7 @@
     <string name="button_cancel_authentication">Cancel authentication</string>
     <string name="button_logout">Logout</string>
     <string name="button_get_photosets">Get photosets</string>
+    <string name="button_get_photos">Get photos</string>
     
     <string name="text_logged_out">Logged out</string>
     <string name="text_waiting_authentication">Waiting authentication&#8230;</string>
@@ -15,7 +16,15 @@
     <string name="message_start_authentication_failed">Could not start OAuth authentication</string>
     <string name="message_finish_authentication_failed">Could not finish OAuth authentication</string>
     <string name="message_get_photosets_failed">Could not list photosets</string>
+    <string name="message_get_photos_failed">Could not list photos</string>
+    
+    <string name="label_clip_data_photo_list">HTML image list</string>
+    
+    <string name="clipboard_text_set">Text copied to clipboard</string>
     
     <string name="title_activity_photoset">Photoset %1$s: %2$s</string>
-
+    
+    <string name="template_html_img">%1$s %2$s %3$s %4$d %5$d\n</string>
+    <string name="template_html_img_without_size">%1$s %2$s %3$s\n</string>
+    
 </resources>

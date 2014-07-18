@@ -33,6 +33,7 @@ import android.widget.Toast;
 public class UserActivity extends Activity
 {
     private static final String TAG = "HILGen";
+    
     private static final String SCHEME = "com-romuloceccon-hilgen";
     
     private Authentication authentication;
@@ -253,11 +254,6 @@ public class UserActivity extends Activity
         return q.substring(q.indexOf("=") + 1);
     }
     
-    private void showToast(CharSequence msg)
-    {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-    }
-    
     private void updateState()
     {
         switch (authentication.getState())
@@ -293,6 +289,11 @@ public class UserActivity extends Activity
         Intent intent = new Intent(getApplicationContext(), PhotosetActivity.class);
         intent.putExtra(PhotosetActivity.KEY_PHOTOSET, photoset);
         startActivity(intent);
+    }
+    
+    private void showToast(CharSequence msg)
+    {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
     
     private OnClickListener startAuthenticationAction = new OnClickListener()
