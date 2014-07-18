@@ -186,7 +186,8 @@ public class UserActivity extends Activity
             }
             
             TextView tv = (TextView) result.findViewById(R.id.item);
-            tv.setText(photosets.get(position).getTitle());
+            Photoset p = photosets.get(position);
+            tv.setText(String.format("%s (%d)", p.getTitle(), p.getPhotoCount()));
             
             return result;
         }
