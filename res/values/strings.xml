@@ -26,8 +26,9 @@
     
     <string name="title_activity_photoset">Photoset %1$s: %2$s</string>
     
-    <string name="template_html_img">&lt;a href=\"%1$s\"
-        title=\"%2$s\"&gt;&lt;img src=\"%3$s\" width=\"%4$d\"
-        height=\"%5$d\" alt=\"%2$s\" /&gt;&lt;/a&gt;\n\n</string>
+    <string name="template_html_img_default">&lt;a $U{{href=\"{}\"
+        }}$T{{title=\"{}\" }}&gt;&lt;img $M_S{{src=\"{}\"
+        }}$M_W{{width=\"{}\" }}$M_H{{height=\"{}\" }}$T{{alt=\"{}\"
+        }}/&gt;&lt;/a&gt;\n\n</string>
     
 </resources>
