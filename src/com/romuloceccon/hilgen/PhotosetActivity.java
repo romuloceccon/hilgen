@@ -21,7 +21,6 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -150,8 +149,6 @@ public class PhotosetActivity extends Activity
         buttonGetPhotos = (Button) findViewById(R.id.button_get_photos);
         textPhotos = (TextView) findViewById(R.id.text_photos);
         textProgress = (TextView) findViewById(R.id.text_progress);
-        
-        textPhotos.setMovementMethod(new ScrollingMovementMethod());
         
         Bundle extras = getIntent().getExtras();
         photoset = (Photoset) extras.getSerializable(KEY_PHOTOSET);
