@@ -17,7 +17,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        android:padding="10sp" />
+        android:layout_margin="10sp" />
 
     <ScrollView
         android:id="@+id/scroll_view"
@@ -34,7 +34,7 @@
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:textIsSelectable="true"
-		        android:padding="10sp" />
+		        android:layout_margin="10sp" />
 		
         </LinearLayout>
         
