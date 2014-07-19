@@ -15,7 +15,7 @@
     <string name="text_logged_in">Logged in as: %1$s</string>
     <string name="text_template">Enter image template as \"$X{{ &#8230; {}
         &#8230; }}\", where \"X\" can be \"T\" (title), \"U\" (url),
-        \"S\" (source), \"W\" (width) or \"H\" (height).\n\nIf the value
+        \"S\" (source), \"W\" (width) or \"H\" (height). If the value
         specified by \"X\" is null everything inside the double brackets is
         omitted. Otherwise the text is included in the output and \"{}\" will be
         replaced by \"X\"\'s value.</string>
