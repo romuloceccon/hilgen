@@ -247,9 +247,9 @@ public class PhotosetActivity extends Activity
             
             template.setSubstitution("T", p.getTitle());
             template.setSubstitution("U", p.getUrl());
-            template.setSubstitution("M_S", p.getMediumUrl());
-            template.setSubstitution("M_W", size == null ? null : String.valueOf(size.getWidth()));
-            template.setSubstitution("M_H", size == null ? null : String.valueOf(size.getHeight()));
+            template.setSubstitution("S", p.getMediumUrl());
+            template.setSubstitution("W", size == null ? null : String.valueOf(size.getWidth()));
+            template.setSubstitution("H", size == null ? null : String.valueOf(size.getHeight()));
             
             builder.append(template.substitute(templateString));
         }
