@@ -36,6 +36,7 @@ public class PhotosetActivity extends Activity
     private static final String TAG = "HILGen";
     
     public static final String KEY_PHOTOSET = "photoset";
+    public static final String KEY_TEMPLATE = "template";
     
     private Authentication authentication;
     
@@ -44,6 +45,7 @@ public class PhotosetActivity extends Activity
     private TextView textProgress;
     
     private Photoset photoset;
+    private String templateString;
     
     private class GetPhotosTask extends AsyncTask<Void, Integer, List<Photo>>
     {
@@ -208,6 +210,7 @@ public class PhotosetActivity extends Activity
         
         Bundle extras = getIntent().getExtras();
         photoset = (Photoset) extras.getSerializable(KEY_PHOTOSET);
+        templateString = extras.getString(KEY_TEMPLATE);
         
         if (photoset != null)
         {
@@ -248,8 +251,7 @@ public class PhotosetActivity extends Activity
             template.setSubstitution("M_W", size == null ? null : String.valueOf(size.getWidth()));
             template.setSubstitution("M_H", size == null ? null : String.valueOf(size.getHeight()));
             
-            builder.append(template.substitute(
-                    getString(R.string.template_html_img_default)));
+            builder.append(template.substitute(templateString));
         }
         
         String text = builder.toString();

@@ -8,15 +8,25 @@
     <string name="button_logout">Logout</string>
     <string name="button_get_photosets">Get photosets</string>
     <string name="button_get_photos">Get photos</string>
+    <string name="button_reset_template">Reset template</string>
     
     <string name="text_logged_out">Logged out</string>
     <string name="text_waiting_authentication">Waiting authentication&#8230;</string>
     <string name="text_logged_in">Logged in as: %1$s</string>
+    <string name="text_template">Enter image template as \"$X{{ &#8230; {}
+        &#8230; }}\", where \"X\" can be \"T\" (title), \"U\" (url),
+        \"S\" (source), \"W\" (width) or \"H\" (height).\n\nIf the value
+        specified by \"X\" is null everything inside the double brackets is
+        omitted. Otherwise the text is included in the output and \"{}\" will be
+        replaced by \"X\"\'s value.</string>
     
     <string name="message_start_authentication_failed">Could not start OAuth authentication</string>
     <string name="message_finish_authentication_failed">Could not finish OAuth authentication</string>
     <string name="message_get_photosets_failed">Could not list photosets</string>
     <string name="message_get_photos_failed">Could not list photos</string>
+    <string name="message_are_you_sure">Are you sure?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
     
     <string name="progress_get_photos">Photos fetched: %1$d</string>
     

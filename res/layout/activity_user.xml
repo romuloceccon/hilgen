@@ -17,6 +17,29 @@
         android:layout_height="wrap_content"
         android:layout_margin="10sp" />
 
+    <TextView
+        android:id="@+id/text_template"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10sp"
+        android:text="@string/text_template" />
+    
+    <EditText
+        android:id="@+id/edit_template"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10sp"
+        android:inputType="textMultiLine"
+        android:minLines="5"
+        android:maxLines="5" />
+
+    <Button
+        android:id="@+id/button_reset_template"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10sp"
+        android:text="@string/button_reset_template" />
+
     <Button
         android:id="@+id/button_get_photosets"
         android:layout_width="wrap_content"
@@ -26,7 +49,7 @@
 
     <ListView
         android:id="@+id/listview_photosets"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
 </LinearLayout>

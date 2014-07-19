@@ -13,8 +13,11 @@ import com.googlecode.flickrjandroid.photosets.Photoset;
 import com.googlecode.flickrjandroid.photosets.PhotosetsInterface;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -26,6 +29,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,16 +40,23 @@ public class UserActivity extends Activity
     
     private static final String SCHEME = "com-romuloceccon-hilgen";
     
+    private static final String PREFS = "GENERAL";
+    private static final String KEY_TEMPLATE = "photo_template";
+    
     private Authentication authentication;
     
     private Button button;
     private TextView textView;
+    private EditText editTemplate;
+    private Button buttonResetTemplate;
     
     private Button buttonGetPhotosets;
     private ListView listView;
     
     private BaseAdapter photosetsAdapter;
     private List<Photoset> photosets = new ArrayList<Photoset>();
+    
+    private SharedPreferences prefs;
     
     private class OAuthStartAuthenticationTask extends AsyncTask<Void, Integer, String>
     {
@@ -203,9 +214,14 @@ public class UserActivity extends Activity
         
         authentication = Authentication.getInstance(getApplicationContext(),
                 FlickrHelper.getFlickr());
+        prefs = getSharedPreferences(PREFS, MODE_PRIVATE);
         
         button = (Button) findViewById(R.id.button_login);
         textView = (TextView) findViewById(R.id.text_login);
+        editTemplate = (EditText) findViewById(R.id.edit_template);
+        
+        buttonResetTemplate = (Button) findViewById(R.id.button_reset_template);
+        buttonResetTemplate.setOnClickListener(buttonResetTemplateListener);
         
         buttonGetPhotosets = (Button) findViewById(R.id.button_get_photosets);
         buttonGetPhotosets.setOnClickListener(buttonGetPhotosetsListener);
@@ -215,6 +231,11 @@ public class UserActivity extends Activity
         listView.setAdapter(photosetsAdapter);
         listView.setClickable(true);
         listView.setOnItemClickListener(listViewClickListener);
+        
+        if (prefs.contains(KEY_TEMPLATE))
+            editTemplate.setText(prefs.getString(KEY_TEMPLATE, ""));
+        else
+            resetTemplate();
         
         updateState();
     }
@@ -229,6 +250,16 @@ public class UserActivity extends Activity
 
         if (scheme != null && scheme.compareTo(SCHEME) == 0)
             handleFlickrCallback(intent);
+    }
+    
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(KEY_TEMPLATE, editTemplate.getText().toString());
+        editor.apply();
     }
     
     private void redirectUserTo(String url)
@@ -291,7 +322,13 @@ public class UserActivity extends Activity
     {
         Intent intent = new Intent(getApplicationContext(), PhotosetActivity.class);
         intent.putExtra(PhotosetActivity.KEY_PHOTOSET, photoset);
+        intent.putExtra(PhotosetActivity.KEY_TEMPLATE, editTemplate.getText().toString());
         startActivity(intent);
+    }
+    
+    private void resetTemplate()
+    {
+        editTemplate.setText(getString(R.string.template_html_img_default));
     }
     
     private void showToast(CharSequence msg)
@@ -324,6 +361,31 @@ public class UserActivity extends Activity
         public void onClick(View v)
         {
             new GetPhotosetsTask().execute();
+        }
+    };
+    
+    private OnClickListener buttonResetTemplateListener = new OnClickListener()
+    {
+        @Override
+        public void onClick(View v)
+        {
+            AlertDialog.Builder builder =
+                    new AlertDialog.Builder(UserActivity.this);
+            builder.setMessage(getString(R.string.message_are_you_sure))
+                .setPositiveButton(getString(R.string.yes), dialogResetTemplateListener)
+                .setNegativeButton(getString(R.string.no), dialogResetTemplateListener)
+                .show();
+        }
+    };
+    
+    private DialogInterface.OnClickListener dialogResetTemplateListener =
+            new DialogInterface.OnClickListener()
+    {
+        @Override
+        public void onClick(DialogInterface dialog, int which)
+        {
+            if (which == DialogInterface.BUTTON_POSITIVE)
+                resetTemplate();
         }
     };
     
