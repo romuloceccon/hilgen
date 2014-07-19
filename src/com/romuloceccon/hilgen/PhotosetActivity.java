@@ -28,6 +28,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -195,6 +196,13 @@ public class PhotosetActivity extends Activity
         }
     }
     
+    private static class ImageSize
+    {
+        public String source;
+        public String width;
+        public String height;
+    }
+    
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -243,13 +251,13 @@ public class PhotosetActivity extends Activity
         {
             template.clearSubstitutions();
             
-            Size size = p.getMediumSize();
+            ImageSize size = getImageSize(p);
             
             template.setSubstitution("T", p.getTitle());
             template.setSubstitution("U", p.getUrl());
-            template.setSubstitution("S", p.getMediumUrl());
-            template.setSubstitution("W", size == null ? null : String.valueOf(size.getWidth()));
-            template.setSubstitution("H", size == null ? null : String.valueOf(size.getHeight()));
+            template.setSubstitution("S", size.source);
+            template.setSubstitution("W", size.width);
+            template.setSubstitution("H", size.height);
             
             builder.append(template.substitute(templateString));
         }
@@ -264,6 +272,71 @@ public class PhotosetActivity extends Activity
                 getString(R.string.label_clip_data_photo_list), text));
         
         showToast(getString(R.string.clipboard_text_set));
+    }
+    
+    private ImageSize getImageSize(Photo p)
+    {
+        if (isChecked(R.id.radio_size_square))
+            return getImageSize(p.getSquareSize());
+        else if (isChecked(R.id.radio_size_large_square))
+            return getImageSize(p.getLargeSquareUrl(), p.getLargeSquareSize());
+        else if (isChecked(R.id.radio_size_thumbnail))
+            return getImageSize(p.getThumbnailUrl(), p.getThumbnailSize());
+        else if (isChecked(R.id.radio_size_small))
+            return getImageSize(p.getSmallUrl(), p.getSmallSize());
+        else if (isChecked(R.id.radio_size_small_320))
+            return getImageSize(p.getSmall320Url(), null);
+        else if (isChecked(R.id.radio_size_medium))
+            return getImageSize(p.getMediumUrl(), p.getMediumSize());
+        else if (isChecked(R.id.radio_size_medium_640))
+            return getImageSize(p.getMedium640Url(), null);
+        else if (isChecked(R.id.radio_size_medium_800))
+            return getImageSize(p.getMedium800Url(), null);
+        else if (isChecked(R.id.radio_size_large))
+            return getImageSize(p.getLargeUrl(), p.getLargeSize());
+        else if (isChecked(R.id.radio_size_large_1600))
+            return getImageSize(p.getLarge1600Url(), null);
+        else if (isChecked(R.id.radio_size_large_2048))
+            return getImageSize(p.getLarge2048Url(), null);
+        else if (isChecked(R.id.radio_size_original))
+            return getImageSize(p.getOriginalSize());
+        
+        return getImageSize(null, null);
+    }
+        
+    private ImageSize getImageSize(Size s)
+    {
+        ImageSize result = new ImageSize();
+        
+        if (s != null)
+        {
+            result.source = s.getSource();
+            result.width = String.valueOf(s.getWidth());
+            result.height = String.valueOf(s.getHeight());
+        }
+        
+        return result;
+    }
+    
+    private ImageSize getImageSize(String source, Size size)
+    {
+        ImageSize result = new ImageSize();
+        
+        result.source = source;
+        
+        if (size != null)
+        {
+            result.width = String.valueOf(size.getWidth());
+            result.height = String.valueOf(size.getHeight());
+        }
+        
+        return result;
+    }
+    
+    private boolean isChecked(int id)
+    {
+        RadioButton button = (RadioButton) findViewById(id);
+        return button.isChecked();
     }
     
     private void updateProgress(Integer count)
