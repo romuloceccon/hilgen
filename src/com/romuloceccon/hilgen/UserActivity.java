@@ -48,10 +48,6 @@ public class UserActivity extends Activity
     private Button button;
     private TextView textView;
     private EditText editTemplate;
-    private Button buttonResetTemplate;
-    
-    private Button buttonGetPhotosets;
-    private ListView listView;
     
     private BaseAdapter photosetsAdapter;
     private List<Photoset> photosets = new ArrayList<Photoset>();
@@ -220,8 +216,8 @@ public class UserActivity extends Activity
         textView = (TextView) findViewById(R.id.text_login);
         editTemplate = (EditText) findViewById(R.id.edit_template);
         
-        buttonResetTemplate = (Button) findViewById(R.id.button_reset_template);
-        buttonResetTemplate.setOnClickListener(new OnClickListener()
+        ((Button) findViewById(R.id.button_reset_template))
+                .setOnClickListener(new OnClickListener()
         {
             @Override
             public void onClick(View v)
@@ -246,8 +242,8 @@ public class UserActivity extends Activity
             }
         });
         
-        buttonGetPhotosets = (Button) findViewById(R.id.button_get_photosets);
-        buttonGetPhotosets.setOnClickListener(new OnClickListener()
+        ((Button) findViewById(R.id.button_get_photosets))
+                .setOnClickListener(new OnClickListener()
         {
             @Override
             public void onClick(View v)
@@ -257,7 +253,7 @@ public class UserActivity extends Activity
         });
         
         photosetsAdapter = new Adapter();
-        listView = (ListView) findViewById(R.id.listview_photosets);
+        ListView listView = (ListView) findViewById(R.id.listview_photosets);
         listView.setAdapter(photosetsAdapter);
         listView.setClickable(true);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
