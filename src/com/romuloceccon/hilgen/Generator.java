@@ -4,7 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,26 +17,10 @@ public class Generator
 {
     private static final String TAG = "HILGen";
     
-    public static class PhotoSizes
+    private static class PhotoSizes
     {
-        private final Photo photo;
-        private final Collection<Size> sizes;
-        
-        public PhotoSizes(Photo photo, Collection<Size> sizes)
-        {
-            this.photo = photo;
-            this.sizes = sizes;
-        }
-        
-        public Photo getPhoto()
-        {
-            return photo;
-        }
-        
-        public Collection<Size> getSizes()
-        {
-            return sizes;
-        }
+        public Photo photo;
+        public Collection<Size> sizes;
     }
     
     private static class Template
@@ -109,27 +92,33 @@ public class Generator
     
     private static final Class<?>[] urlMethodTypes = new Class[] { };
     private static final Map<String, UrlMethod> urlMethods;
-    private static final List<String> labels;
+    private static final Collection<String> labels;
     
-    private UrlMethod urlMethod;
+    private final Collection<PhotoSizes> photoSizesList =
+            new ArrayList<PhotoSizes>();;
+    private final Template template =
+            new Template("\\$(\\w+)\\{\\{(.*?)\\}\\}");
     
-    public Generator(String sizeLabel)
+    public void addPhotoSizes(Photo photo, Collection<Size> sizes)
     {
-        urlMethod = urlMethods.containsKey(sizeLabel) ?
-                urlMethods.get(sizeLabel) : null;
+        PhotoSizes p = new PhotoSizes();
+        p.photo = photo;
+        p.sizes = sizes;
+        photoSizesList.add(p);
     }
     
-    public String build(String templateString,
-            Collection<PhotoSizes> photoSizesCollection)
+    public String build(String templateString, String sizeLabel)
     {
-        Template template = new Template("\\$(\\w+)\\{\\{(.*?)\\}\\}");
+        UrlMethod urlMethod = urlMethods.containsKey(sizeLabel) ?
+                urlMethods.get(sizeLabel) : null;
+        
         StringBuilder builder = new StringBuilder();
         
-        for (PhotoSizes p: photoSizesCollection)
+        for (PhotoSizes p: photoSizesList)
         {
             template.clearSubstitutions();
             
-            ImageInfo info = getImageInfo(p);
+            ImageInfo info = getImageInfo(p, urlMethod);
             
             template.setSubstitution("T", info.title);
             template.setSubstitution("U", info.url);
@@ -143,7 +132,7 @@ public class Generator
         return builder.toString();
     }
     
-    private ImageInfo getImageInfo(PhotoSizes photoSizes)
+    private ImageInfo getImageInfo(PhotoSizes photoSizes, UrlMethod urlMethod)
     {
         ImageInfo result = new ImageInfo();
         
@@ -152,7 +141,7 @@ public class Generator
         result.url = p.getUrl();
         
         Collection<Size> sizes = photoSizes.sizes;
-        Size s = sizes != null ? findSize(sizes) : null;
+        Size s = sizes != null ? findSize(urlMethod.code, sizes) : null;
         
         if (s != null)
         {
@@ -183,15 +172,15 @@ public class Generator
         return result;
     }
     
-    public static List<String> getLabels()
+    public static Collection<String> getLabels()
     {
         return labels;
     }
     
-    private Size findSize(Collection<Size> sizes)
+    private Size findSize(int code, Collection<Size> sizes)
     {
         for (Size s: sizes)
-            if (s.getLabel() == urlMethod.code)
+            if (s.getLabel() == code)
                 return s;
         return null;
     }

@@ -1,9 +1,7 @@
 package com.romuloceccon.hilgen;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.json.JSONException;
 
@@ -46,11 +44,12 @@ public class PhotosetActivity extends Activity
     
     private Photoset photoset;
     private String templateString;
+    private Generator generator = null;
     
-    private class GetPhotosTask extends AsyncTask<Void, Integer, List<Generator.PhotoSizes>>
+    private class GetPhotosTask extends AsyncTask<Void, Integer, Generator>
     {
         @Override
-        protected List<Generator.PhotoSizes> doInBackground(Void... params)
+        protected Generator doInBackground(Void... params)
         {
             OAuth oAuth = authentication.getOAuth();
             if (oAuth == null)
@@ -58,7 +57,7 @@ public class PhotosetActivity extends Activity
             
             FlickrHelper.setOAuth(oAuth);
             
-            List<Generator.PhotoSizes> result = new ArrayList<Generator.PhotoSizes>();
+            Generator result = new Generator();
             
             Flickr f = FlickrHelper.getFlickr();
             PhotosetsInterface photosetsIntf = f.getPhotosetsInterface();
@@ -100,7 +99,7 @@ public class PhotosetActivity extends Activity
                                 throw e;
                         }
                         
-                        result.add(new Generator.PhotoSizes(p, s));
+                        result.addPhotoSizes(p, s);
                         
                         publishProgress(++count);
                     }
@@ -128,13 +127,14 @@ public class PhotosetActivity extends Activity
         }
         
         @Override
-        protected void onPostExecute(List<Generator.PhotoSizes> result)
+        protected void onPostExecute(Generator result)
         {
             if (result == null)
                 showToast(getString(R.string.message_get_photos_failed));
             
-            updatePhotosText(result);
+            generator = result;
             updateProgress(null);
+            updatePhotosText();
         }
         
         @Override
@@ -165,6 +165,15 @@ public class PhotosetActivity extends Activity
             radioSize.addView(rb);
         }
         
+        radioSize.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId)
+            {
+                updatePhotosText();
+            }
+        });
+        
         Bundle extras = getIntent().getExtras();
         photoset = (Photoset) extras.getSerializable(KEY_PHOTOSET);
         templateString = extras.getString(KEY_TEMPLATE);
@@ -185,16 +194,15 @@ public class PhotosetActivity extends Activity
         }
     }
     
-    private void updatePhotosText(List<Generator.PhotoSizes> photoSizes)
+    private void updatePhotosText()
     {
-        if (photoSizes == null)
+        if (generator == null)
         {
             textPhotos.setText("");
             return;
         }
         
-        Generator generator = new Generator(getSelectedSizeName());
-        String text = generator.build(templateString, photoSizes);
+        String text = generator.build(templateString, getSelectedSizeName());
         
         textPhotos.setText(text);
         
