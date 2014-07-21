@@ -9,11 +9,15 @@
     <string name="button_get_photosets">Get photosets</string>
     <string name="button_get_photos">Get photos</string>
     <string name="button_reset_template">Reset template</string>
+    <string name="button_templates">Templates&#8230;</string>
     
     <string name="text_logged_out">Logged out</string>
     <string name="text_waiting_authentication">Waiting authentication&#8230;</string>
     <string name="text_logged_in">Logged in as: %1$s</string>
-    <string name="text_template">Enter image template as \"$X{{ &#8230; {}
+    <string name="text_name">Name</string>
+    <string name="text_template_global">Enter global template as \"&#8230; {}
+        &#8230;\". \"{}\" will be replaced by inner content.</string>
+    <string name="text_template_img">Enter image template as \"$X{{ &#8230; {}
         &#8230; }}\", where \"X\" can be \"T\" (title), \"U\" (url),
         \"S\" (source), \"W\" (width) or \"H\" (height). If the value
         specified by \"X\" is null everything inside the double brackets is
@@ -48,6 +52,7 @@
     <string name="clipboard_text_set">Text copied to clipboard</string>
     
     <string name="title_activity_photoset">Photoset %1$s: %2$s</string>
+    <string name="title_activity_template">Template Editor</string>
     
     <string name="template_html_img_default">&lt;a $U{{href=\"{}\"
         }}$T{{title=\"{}\" }}&gt;&lt;img $S{{src=\"{}\"

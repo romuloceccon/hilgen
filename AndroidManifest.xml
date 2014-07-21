@@ -15,7 +15,6 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-        
         <activity
             android:name=".UserActivity"
             android:label="@string/app_name" >
@@ -34,7 +33,12 @@
             </intent-filter>
         </activity>
         
-        <activity android:name=".PhotosetActivity" />
+        <activity
+            android:name=".PhotosetActivity" />
+        
+        <activity
+            android:name=".TemplateActivity"
+            android:label="@string/title_activity_template" />
     </application>
 
 </manifest>

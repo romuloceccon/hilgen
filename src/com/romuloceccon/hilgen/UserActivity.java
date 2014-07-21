@@ -242,6 +242,17 @@ public class UserActivity extends Activity
             }
         });
         
+        ((Button) findViewById(R.id.button_templates))
+                .setOnClickListener(new OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                startActivity(new Intent(getApplicationContext(),
+                        TemplateActivity.class));
+            }
+        });
+        
         ((Button) findViewById(R.id.button_get_photosets))
                 .setOnClickListener(new OnClickListener()
         {
