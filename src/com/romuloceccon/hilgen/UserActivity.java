@@ -221,16 +221,54 @@ public class UserActivity extends Activity
         editTemplate = (EditText) findViewById(R.id.edit_template);
         
         buttonResetTemplate = (Button) findViewById(R.id.button_reset_template);
-        buttonResetTemplate.setOnClickListener(buttonResetTemplateListener);
+        buttonResetTemplate.setOnClickListener(new OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                DialogInterface.OnClickListener listener =
+                        new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                        if (which == DialogInterface.BUTTON_POSITIVE)
+                            resetTemplate();
+                    }
+                };
+                
+                AlertDialog.Builder builder =
+                        new AlertDialog.Builder(UserActivity.this);
+                builder.setMessage(getString(R.string.message_are_you_sure))
+                    .setPositiveButton(getString(R.string.yes), listener)
+                    .setNegativeButton(getString(R.string.no), listener)
+                    .show();
+            }
+        });
         
         buttonGetPhotosets = (Button) findViewById(R.id.button_get_photosets);
-        buttonGetPhotosets.setOnClickListener(buttonGetPhotosetsListener);
+        buttonGetPhotosets.setOnClickListener(new OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                new GetPhotosetsTask().execute();
+            }
+        });
         
         photosetsAdapter = new Adapter();
         listView = (ListView) findViewById(R.id.listview_photosets);
         listView.setAdapter(photosetsAdapter);
         listView.setClickable(true);
-        listView.setOnItemClickListener(listViewClickListener);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position,
+                    long id)
+            {
+                showPhotoset(photosets.get(position));
+            }
+        });
         
         if (prefs.contains(KEY_TEMPLATE))
             editTemplate.setText(prefs.getString(KEY_TEMPLATE, ""));
@@ -352,51 +390,6 @@ public class UserActivity extends Activity
         {
             authentication.logout();
             updateState();
-        }
-    };
-    
-    private OnClickListener buttonGetPhotosetsListener = new OnClickListener()
-    {
-        @Override
-        public void onClick(View v)
-        {
-            new GetPhotosetsTask().execute();
-        }
-    };
-    
-    private OnClickListener buttonResetTemplateListener = new OnClickListener()
-    {
-        @Override
-        public void onClick(View v)
-        {
-            AlertDialog.Builder builder =
-                    new AlertDialog.Builder(UserActivity.this);
-            builder.setMessage(getString(R.string.message_are_you_sure))
-                .setPositiveButton(getString(R.string.yes), dialogResetTemplateListener)
-                .setNegativeButton(getString(R.string.no), dialogResetTemplateListener)
-                .show();
-        }
-    };
-    
-    private DialogInterface.OnClickListener dialogResetTemplateListener =
-            new DialogInterface.OnClickListener()
-    {
-        @Override
-        public void onClick(DialogInterface dialog, int which)
-        {
-            if (which == DialogInterface.BUTTON_POSITIVE)
-                resetTemplate();
-        }
-    };
-    
-    private AdapterView.OnItemClickListener listViewClickListener =
-            new AdapterView.OnItemClickListener()
-    {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position,
-                long id)
-        {
-            showPhotoset(photosets.get(position));
         }
     };
 }
