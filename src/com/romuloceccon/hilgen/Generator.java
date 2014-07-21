@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -92,7 +93,7 @@ public class Generator
     
     private static final Class<?>[] urlMethodTypes = new Class[] { };
     private static final Map<String, UrlMethod> urlMethods;
-    private static final Collection<String> labels;
+    private static final List<String> labels;
     
     private final Collection<PhotoSizes> photoSizesList =
             new ArrayList<PhotoSizes>();;
@@ -172,9 +173,12 @@ public class Generator
         return result;
     }
     
-    public static Collection<String> getLabels()
+    public static String[] getLabels()
     {
-        return labels;
+        String[] result = new String[labels.size()];
+        for (int i = 0; i < labels.size(); i++)
+            result[i] = labels.get(i);
+        return result;
     }
     
     private Size findSize(int code, Collection<Size> sizes)

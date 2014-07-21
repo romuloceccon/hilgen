@@ -22,9 +22,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,11 +37,15 @@ public class PhotosetActivity extends Activity
     public static final String KEY_TEMPLATE = "template";
     
     private Authentication authentication;
+    private String[] sizeLabels;
+    private String currentSize = null;
     
-    private RadioGroup radioSize;
+    private Spinner spinnerSize;
     private Button buttonGetPhotos;
     private TextView textPhotos;
     private TextView textProgress;
+    
+    private ArrayAdapter<CharSequence> sizesAdapter;
     
     private Photoset photoset;
     private String templateString;
@@ -152,24 +157,31 @@ public class PhotosetActivity extends Activity
         
         authentication = Authentication.getInstance(getApplicationContext(),
                 FlickrHelper.getFlickr());
+        sizeLabels = Generator.getLabels();
         
-        radioSize = (RadioGroup) findViewById(R.id.radio_size);
+        spinnerSize = (Spinner) findViewById(R.id.spinner_size);
         buttonGetPhotos = (Button) findViewById(R.id.button_get_photos);
         textPhotos = (TextView) findViewById(R.id.text_photos);
         textProgress = (TextView) findViewById(R.id.text_progress);
         
-        for (String s: Generator.getLabels())
-        {
-            final RadioButton rb = new RadioButton(this);
-            rb.setText(s);
-            radioSize.addView(rb);
-        }
+        sizesAdapter = new ArrayAdapter<CharSequence>(this,
+                android.R.layout.simple_spinner_item, sizeLabels);
+        spinnerSize.setAdapter(sizesAdapter);
         
-        radioSize.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
+        spinnerSize.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
         {
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId)
+            public void onItemSelected(AdapterView<?> parent, View v,
+                    int position, long id)
             {
+                currentSize = sizeLabels[position];
+                updatePhotosText();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0)
+            {
+                currentSize = null;
                 updatePhotosText();
             }
         });
@@ -202,7 +214,8 @@ public class PhotosetActivity extends Activity
             return;
         }
         
-        String text = generator.build(templateString, getSelectedSizeName());
+        String text = generator.build(templateString,
+                currentSize == null ? sizeLabels[0] : currentSize);
         
         textPhotos.setText(text);
         
@@ -212,17 +225,6 @@ public class PhotosetActivity extends Activity
                 getString(R.string.label_clip_data_photo_list), text));
         
         showToast(getString(R.string.clipboard_text_set));
-    }
-    
-    private String getSelectedSizeName()
-    {
-        int rbId = radioSize.getCheckedRadioButtonId();
-        RadioButton rb = (RadioButton) findViewById(rbId);
-        if (rb == null && radioSize.getChildCount() > 0)
-            rb = (RadioButton) radioSize.getChildAt(0);
-        if (rb == null)
-            return null;
-        return rb.getText().toString();
     }
     
     private void updateProgress(Integer count)
