@@ -5,93 +5,11 @@
     android:layout_height="match_parent"
     tools:context="${relativePackage}.${activityClass}" >
 
-    <ScrollView
-        android:id="@+id/scroll_size"
+    <RadioGroup
+        android:id="@+id/radio_size"
         android:layout_width="match_parent"
-        android:layout_height="200sp" >
-        
-	    <RadioGroup
-	        android:id="@+id/radio_size"
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:layout_margin="10sp" >
-	        
-	        <RadioButton
-	            android:id="@+id/radio_size_square"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:text="@string/radio_size_square" />
-	        
-	        <RadioButton
-	            android:id="@+id/radio_size_large_square"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:text="@string/radio_size_large_square" />
-	        
-	        <RadioButton
-	            android:id="@+id/radio_size_thumbnail"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:text="@string/radio_size_thumbnail" />
-	        
-	        <RadioButton
-	            android:id="@+id/radio_size_small"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:text="@string/radio_size_small" />
-	        
-	        <RadioButton
-	            android:id="@+id/radio_size_small_320"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:text="@string/radio_size_small_320" />
-	        
-	        <RadioButton
-	            android:id="@+id/radio_size_medium"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:text="@string/radio_size_medium" 
-	            android:checked="true" />
-	        
-	        <RadioButton
-	            android:id="@+id/radio_size_medium_640"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:text="@string/radio_size_medium_640" />
-	        
-	        <RadioButton
-	            android:id="@+id/radio_size_medium_800"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:text="@string/radio_size_medium_800" />
-	        
-	        <RadioButton
-	            android:id="@+id/radio_size_large"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:text="@string/radio_size_large" />
-	        
-	        <RadioButton
-	            android:id="@+id/radio_size_large_1600"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:text="@string/radio_size_large_1600" />
-	        
-	        <RadioButton
-	            android:id="@+id/radio_size_large_2048"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:text="@string/radio_size_large_2048" />
-	        
-	        <RadioButton
-	            android:id="@+id/radio_size_original"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:text="@string/radio_size_original" />
-	        
-		</RadioGroup>
-		
-	</ScrollView>
+        android:layout_height="wrap_content"
+        android:layout_margin="10sp" />
     
     <Button
         android:id="@+id/button_get_photos"

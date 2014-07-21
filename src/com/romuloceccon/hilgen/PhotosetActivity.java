@@ -2,6 +2,7 @@ package com.romuloceccon.hilgen;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,6 +43,7 @@ public class PhotosetActivity extends Activity
     
     private Authentication authentication;
     
+    private RadioGroup radioSize;
     private Button buttonGetPhotos;
     private TextView textPhotos;
     private TextView textProgress;
@@ -48,10 +51,10 @@ public class PhotosetActivity extends Activity
     private Photoset photoset;
     private String templateString;
     
-    private class GetPhotosTask extends AsyncTask<Void, Integer, List<Photo>>
+    private class GetPhotosTask extends AsyncTask<Void, Integer, List<Generator.PhotoSizes>>
     {
         @Override
-        protected List<Photo> doInBackground(Void... params)
+        protected List<Generator.PhotoSizes> doInBackground(Void... params)
         {
             OAuth oAuth = authentication.getOAuth();
             if (oAuth == null)
@@ -59,7 +62,7 @@ public class PhotosetActivity extends Activity
             
             FlickrHelper.setOAuth(oAuth);
             
-            List<Photo> result = new ArrayList<Photo>();
+            List<Generator.PhotoSizes> result = new ArrayList<Generator.PhotoSizes>();
             
             Flickr f = FlickrHelper.getFlickr();
             PhotosetsInterface photosetsIntf = f.getPhotosetsInterface();
@@ -88,10 +91,11 @@ public class PhotosetActivity extends Activity
                     for (Photo t: photos)
                     {
                         Photo p = photosIntf.getPhoto(t.getId());
+                        Collection<Size> s = null;
                         
                         try
                         {
-                            p.setSizes(photosIntf.getSizes(t.getId()));
+                            s = photosIntf.getSizes(t.getId());
                         }
                         catch (FlickrException e)
                         {
@@ -100,7 +104,7 @@ public class PhotosetActivity extends Activity
                                 throw e;
                         }
                         
-                        result.add(p);
+                        result.add(new Generator.PhotoSizes(p, s));
                         
                         publishProgress(++count);
                     }
@@ -128,7 +132,7 @@ public class PhotosetActivity extends Activity
         }
         
         @Override
-        protected void onPostExecute(List<Photo> result)
+        protected void onPostExecute(List<Generator.PhotoSizes> result)
         {
             if (result == null)
                 showToast(getString(R.string.message_get_photos_failed));
@@ -196,13 +200,6 @@ public class PhotosetActivity extends Activity
         }
     }
     
-    private static class ImageSize
-    {
-        public String source;
-        public String width;
-        public String height;
-    }
-    
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -212,9 +209,17 @@ public class PhotosetActivity extends Activity
         authentication = Authentication.getInstance(getApplicationContext(),
                 FlickrHelper.getFlickr());
         
+        radioSize = (RadioGroup) findViewById(R.id.radio_size);
         buttonGetPhotos = (Button) findViewById(R.id.button_get_photos);
         textPhotos = (TextView) findViewById(R.id.text_photos);
         textProgress = (TextView) findViewById(R.id.text_progress);
+        
+        for (String s: Generator.getLabels())
+        {
+            final RadioButton rb = new RadioButton(this);
+            rb.setText(s);
+            radioSize.addView(rb);
+        }
         
         Bundle extras = getIntent().getExtras();
         photoset = (Photoset) extras.getSerializable(KEY_PHOTOSET);
@@ -236,9 +241,9 @@ public class PhotosetActivity extends Activity
         }
     }
     
-    private void updatePhotosText(List<Photo> photos)
+    private void updatePhotosText(List<Generator.PhotoSizes> photoSizes)
     {
-        if (photos == null)
+        if (photoSizes == null)
         {
             textPhotos.setText("");
             return;
@@ -246,18 +251,19 @@ public class PhotosetActivity extends Activity
         
         Template template = new Template("\\$(\\w+)\\{\\{(.*?)\\}\\}");
         StringBuilder builder = new StringBuilder();
+        Generator generator = new Generator(getSelectedSizeName());
         
-        for (Photo p: photos)
+        for (Generator.PhotoSizes p: photoSizes)
         {
             template.clearSubstitutions();
             
-            ImageSize size = getImageSize(p);
+            Generator.ImageInfo info = generator.getImageInfo(p);
             
-            template.setSubstitution("T", p.getTitle());
-            template.setSubstitution("U", p.getUrl());
-            template.setSubstitution("S", size.source);
-            template.setSubstitution("W", size.width);
-            template.setSubstitution("H", size.height);
+            template.setSubstitution("T", info.title);
+            template.setSubstitution("U", info.url);
+            template.setSubstitution("S", info.source);
+            template.setSubstitution("W", info.width);
+            template.setSubstitution("H", info.height);
             
             builder.append(template.substitute(templateString));
         }
@@ -274,69 +280,15 @@ public class PhotosetActivity extends Activity
         showToast(getString(R.string.clipboard_text_set));
     }
     
-    private ImageSize getImageSize(Photo p)
+    private String getSelectedSizeName()
     {
-        if (isChecked(R.id.radio_size_square))
-            return getImageSize(p.getSquareSize());
-        else if (isChecked(R.id.radio_size_large_square))
-            return getImageSize(p.getLargeSquareUrl(), p.getLargeSquareSize());
-        else if (isChecked(R.id.radio_size_thumbnail))
-            return getImageSize(p.getThumbnailUrl(), p.getThumbnailSize());
-        else if (isChecked(R.id.radio_size_small))
-            return getImageSize(p.getSmallUrl(), p.getSmallSize());
-        else if (isChecked(R.id.radio_size_small_320))
-            return getImageSize(p.getSmall320Url(), null);
-        else if (isChecked(R.id.radio_size_medium))
-            return getImageSize(p.getMediumUrl(), p.getMediumSize());
-        else if (isChecked(R.id.radio_size_medium_640))
-            return getImageSize(p.getMedium640Url(), null);
-        else if (isChecked(R.id.radio_size_medium_800))
-            return getImageSize(p.getMedium800Url(), null);
-        else if (isChecked(R.id.radio_size_large))
-            return getImageSize(p.getLargeUrl(), p.getLargeSize());
-        else if (isChecked(R.id.radio_size_large_1600))
-            return getImageSize(p.getLarge1600Url(), null);
-        else if (isChecked(R.id.radio_size_large_2048))
-            return getImageSize(p.getLarge2048Url(), null);
-        else if (isChecked(R.id.radio_size_original))
-            return getImageSize(p.getOriginalSize());
-        
-        return getImageSize(null, null);
-    }
-        
-    private ImageSize getImageSize(Size s)
-    {
-        ImageSize result = new ImageSize();
-        
-        if (s != null)
-        {
-            result.source = s.getSource();
-            result.width = String.valueOf(s.getWidth());
-            result.height = String.valueOf(s.getHeight());
-        }
-        
-        return result;
-    }
-    
-    private ImageSize getImageSize(String source, Size size)
-    {
-        ImageSize result = new ImageSize();
-        
-        result.source = source;
-        
-        if (size != null)
-        {
-            result.width = String.valueOf(size.getWidth());
-            result.height = String.valueOf(size.getHeight());
-        }
-        
-        return result;
-    }
-    
-    private boolean isChecked(int id)
-    {
-        RadioButton button = (RadioButton) findViewById(id);
-        return button.isChecked();
+        int rbId = radioSize.getCheckedRadioButtonId();
+        RadioButton rb = (RadioButton) findViewById(rbId);
+        if (rb == null && radioSize.getChildCount() > 0)
+            rb = (RadioButton) radioSize.getChildAt(0);
+        if (rb == null)
+            return null;
+        return rb.getText().toString();
     }
     
     private void updateProgress(Integer count)
