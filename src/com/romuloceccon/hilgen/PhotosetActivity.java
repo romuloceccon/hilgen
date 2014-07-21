@@ -3,11 +3,7 @@ package com.romuloceccon.hilgen;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.json.JSONException;
 
@@ -148,58 +144,6 @@ public class PhotosetActivity extends Activity
         }
     }
     
-    private static class Template
-    {
-        private Pattern pattern;
-        private Map<String, String> substitutions;
-        
-        public Template(String regex)
-        {
-            pattern = Pattern.compile(regex);
-            substitutions = new HashMap<String, String>();
-        }
-        
-        public void clearSubstitutions()
-        {
-            substitutions.clear();
-        }
-        
-        public void setSubstitution(String name, String value)
-        {
-            substitutions.put(name, value);
-        }
-        
-        public String substitute(String input)
-        {
-            StringBuilder sb = new StringBuilder();
-            Matcher matcher = pattern.matcher(input);
-            int pos = 0;
-            
-            while (matcher.find())
-            {
-                sb.append(input.substring(pos, matcher.start()));
-                
-                String key = matcher.group(1);
-                String text = matcher.group(2);
-                
-                if (substitutions.containsKey(key))
-                {
-                    String value = substitutions.get(key);
-                    if (value != null)
-                        sb.append(text.replaceFirst("\\{\\}", value));
-                }
-                else
-                    sb.append(matcher.group(0));
-                
-                pos = matcher.end();
-            }
-            
-            sb.append(input.substring(pos));
-            
-            return sb.toString();
-        }
-    }
-    
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -249,26 +193,8 @@ public class PhotosetActivity extends Activity
             return;
         }
         
-        Template template = new Template("\\$(\\w+)\\{\\{(.*?)\\}\\}");
-        StringBuilder builder = new StringBuilder();
         Generator generator = new Generator(getSelectedSizeName());
-        
-        for (Generator.PhotoSizes p: photoSizes)
-        {
-            template.clearSubstitutions();
-            
-            Generator.ImageInfo info = generator.getImageInfo(p);
-            
-            template.setSubstitution("T", info.title);
-            template.setSubstitution("U", info.url);
-            template.setSubstitution("S", info.source);
-            template.setSubstitution("W", info.width);
-            template.setSubstitution("H", info.height);
-            
-            builder.append(template.substitute(templateString));
-        }
-        
-        String text = builder.toString();
+        String text = generator.build(templateString, photoSizes);
         
         textPhotos.setText(text);
         
