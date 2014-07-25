@@ -33,7 +33,7 @@
         android:layout_marginTop="10sp"
         android:layout_marginRight="10sp"
         android:layout_marginLeft="10sp"
-        android:text="@string/text_template_img"
+        android:text="@string/text_inner"
         android:textSize="14sp" />
     
     <EditText

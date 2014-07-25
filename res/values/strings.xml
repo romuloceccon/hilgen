@@ -10,14 +10,16 @@
     <string name="button_get_photos">Get photos</string>
     <string name="button_reset_template">Reset template</string>
     <string name="button_templates">Templates&#8230;</string>
+    <string name="button_new">New</string>
+    <string name="button_save">Save</string>
     
     <string name="text_logged_out">Logged out</string>
     <string name="text_waiting_authentication">Waiting authentication&#8230;</string>
     <string name="text_logged_in">Logged in as: %1$s</string>
     <string name="text_name">Name</string>
-    <string name="text_template_global">Enter global template as \"&#8230; {}
+    <string name="text_outer">Enter global template as \"&#8230; {}
         &#8230;\". \"{}\" will be replaced by inner content.</string>
-    <string name="text_template_img">Enter image template as \"$X{{ &#8230; {}
+    <string name="text_inner">Enter image template as \"$X{{ &#8230; {}
         &#8230; }}\", where \"X\" can be \"T\" (title), \"U\" (url),
         \"S\" (source), \"W\" (width) or \"H\" (height). If the value
         specified by \"X\" is null everything inside the double brackets is
