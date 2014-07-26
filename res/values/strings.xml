@@ -61,10 +61,12 @@
     <string name="title_activity_photoset">Photoset %1$s: %2$s</string>
     <string name="title_activity_template">Template Editor</string>
     
-    <string name="template_default_outer">&lt;div&gt;{}&lt;/div&gt;</string>
+    <string name="template_default_outer">&lt;div
+        class=\"image-block\"&gt;\n\n{}\n\n&lt;/div&gt;</string>
     <string name="template_default_inner">&lt;a $U{{href=\"{}\"
         }}$T{{title=\"{}\" }}&gt;&lt;img $S{{src=\"{}\"
         }}$W{{width=\"{}\" }}$H{{height=\"{}\" }}$T{{alt=\"{}\"
-        }}/&gt;&lt;/a&gt;\n\n</string>
+        }}/&gt;&lt;/a&gt;\n\n&lt;div class=\"image-caption
+        w-70\"&gt;\n&lt;p&gt;&lt;/p&gt;\n&lt;/div&gt;</string>
     
 </resources>
