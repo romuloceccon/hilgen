@@ -110,8 +110,10 @@ public class Generator
     
     public String build(String templateString, String sizeLabel)
     {
-        UrlMethod urlMethod = urlMethods.containsKey(sizeLabel) ?
-                urlMethods.get(sizeLabel) : null;
+        if (!urlMethods.containsKey(sizeLabel))
+            return "";
+        
+        UrlMethod urlMethod = urlMethods.get(sizeLabel);
         
         StringBuilder builder = new StringBuilder();
         
@@ -154,7 +156,8 @@ public class Generator
         {
             try
             {
-                result.source = (String) urlMethod.method.invoke(p);
+                if (urlMethod.method != null)
+                    result.source = (String) urlMethod.method.invoke(p);
             }
             catch (IllegalArgumentException e)
             {
@@ -215,16 +218,16 @@ public class Generator
         labels = new ArrayList<String>();
         
         addSize("Square", Size.SQUARE, "getSquareUrl");
-        addSize("Large Square", Size.LARGE_SQUARE, "getLarge SquareUrl");
+        addSize("Large Square", Size.LARGE_SQUARE, "getLargeSquareUrl");
         addSize("Thumbnail", Size.THUMB, "getThumbnailUrl");
         addSize("Small", Size.SMALL, "getSmallUrl");
-        addSize("Small 320", Size.SMALL_320, "getSmall 320Url");
+        addSize("Small 320", Size.SMALL_320, "getSmall320Url");
         addSize("Medium", Size.MEDIUM, "getMediumUrl");
-        addSize("Medium 640", Size.MEDIUM_640, "getMedium 640Url");
-        addSize("Medium 800", Size.MEDIUM_800, "getMedium 800Url");
+        addSize("Medium 640", Size.MEDIUM_640, "getMedium640Url");
+        addSize("Medium 800", Size.MEDIUM_800, "getMedium800Url");
         addSize("Large", Size.LARGE, "getLargeUrl");
-        addSize("Large 1600", Size.LARGE_1600, "getLarge 1600Url");
-        addSize("Large 2048", Size.LARGE_2048, "getLarge 2048Url");
+        addSize("Large 1600", Size.LARGE_1600, "getLarge1600Url");
+        addSize("Large 2048", Size.LARGE_2048, "getLarge2048Url");
         addSize("Original", Size.ORIGINAL, "getOriginalUrl");
     }
 }

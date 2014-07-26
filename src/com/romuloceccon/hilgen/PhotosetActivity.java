@@ -1,7 +1,9 @@
 package com.romuloceccon.hilgen;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.json.JSONException;
 
@@ -18,6 +20,8 @@ import com.googlecode.flickrjandroid.photosets.PhotosetsInterface;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -34,21 +38,28 @@ public class PhotosetActivity extends Activity
     private static final String TAG = "HILGen";
     
     public static final String KEY_PHOTOSET = "photoset";
-    public static final String KEY_TEMPLATE = "template";
+    
+    private static final String KEY_SELECTED_SIZE = "select_size";
+    private static final String KEY_SELECTED_TEMPLATE = "selected_template";
     
     private Authentication authentication;
     private String[] sizeLabels;
+    private List<Template> templates = new ArrayList<Template>();
     private String currentSize = null;
+    private Template currentTemplate = null;
+    
+    private SharedPreferences prefs;
     
     private Spinner spinnerSize;
+    private Spinner spinnerTemplate;
     private Button buttonGetPhotos;
     private TextView textPhotos;
     private TextView textProgress;
     
     private ArrayAdapter<CharSequence> sizesAdapter;
+    private ArrayAdapter<Template> templatesAdapter;
     
     private Photoset photoset;
-    private String templateString;
     private Generator generator = null;
     
     private class GetPhotosTask extends AsyncTask<Void, Integer, Generator>
@@ -158,8 +169,12 @@ public class PhotosetActivity extends Activity
         authentication = Authentication.getInstance(getApplicationContext(),
                 FlickrHelper.getFlickr());
         sizeLabels = Generator.getLabels();
+        Template.getAll(getApplicationContext(), templates);
+        
+        prefs = getPreferences(Context.MODE_PRIVATE);
         
         spinnerSize = (Spinner) findViewById(R.id.spinner_size);
+        spinnerTemplate = (Spinner) findViewById(R.id.spinner_template);
         buttonGetPhotos = (Button) findViewById(R.id.button_get_photos);
         textPhotos = (TextView) findViewById(R.id.text_photos);
         textProgress = (TextView) findViewById(R.id.text_progress);
@@ -167,6 +182,10 @@ public class PhotosetActivity extends Activity
         sizesAdapter = new ArrayAdapter<CharSequence>(this,
                 android.R.layout.simple_spinner_item, sizeLabels);
         spinnerSize.setAdapter(sizesAdapter);
+        
+        templatesAdapter = new ArrayAdapter<Template>(this,
+                android.R.layout.simple_spinner_item, templates);
+        spinnerTemplate.setAdapter(templatesAdapter);
         
         spinnerSize.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
         {
@@ -186,9 +205,26 @@ public class PhotosetActivity extends Activity
             }
         });
         
+        spinnerTemplate.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+        {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view,
+                    int position, long id)
+            {
+                currentTemplate = templates.get(position);
+                updatePhotosText();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent)
+            {
+                currentTemplate = null;
+                updatePhotosText();
+            }
+        });
+        
         Bundle extras = getIntent().getExtras();
         photoset = (Photoset) extras.getSerializable(KEY_PHOTOSET);
-        templateString = extras.getString(KEY_TEMPLATE);
         
         if (photoset != null)
         {
@@ -204,6 +240,60 @@ public class PhotosetActivity extends Activity
                 }
             });
         }
+        
+        if (sizeLabels.length > 0)
+        {
+            currentSize = prefs.getString(KEY_SELECTED_SIZE, null);
+            int posSize = -1;
+            if (currentSize != null)
+            {
+                posSize = getSizeLabelPos(currentSize);
+            }
+            if (posSize == -1)
+            {
+                posSize = 0;
+                currentSize = sizeLabels[0];
+            }
+            spinnerSize.setSelection(posSize);
+        }
+        
+        if (templates.size() > 0)
+        {
+            currentTemplate = Template.getById(getApplicationContext(),
+                    prefs.getInt(KEY_SELECTED_TEMPLATE, 1));
+            int posTemplate = -1;
+            if (currentTemplate != null)
+            {
+                posTemplate = getTemplatePos(currentTemplate);
+            }
+            if (posTemplate == -1)
+            {
+                posTemplate = 0;
+                currentTemplate = templates.get(0);
+            }
+            spinnerTemplate.setSelection(posTemplate);
+        }
+    }
+    
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        
+        SharedPreferences.Editor editor = prefs.edit();
+        int posSize = spinnerSize.getSelectedItemPosition();
+        if (posSize >= 0 && posSize < sizeLabels.length)
+            editor.putString(KEY_SELECTED_SIZE, sizeLabels[posSize]);
+        else
+            editor.remove(KEY_SELECTED_SIZE);
+        int posTemplate = spinnerTemplate.getSelectedItemPosition();
+        if (posTemplate >= 0 && posTemplate < templates.size())
+        {
+            editor.putInt(KEY_SELECTED_TEMPLATE, templates.get(posTemplate).getId());
+        }
+        else
+            editor.remove(KEY_SELECTED_TEMPLATE);
+        editor.apply();
     }
     
     private void updatePhotosText()
@@ -214,8 +304,15 @@ public class PhotosetActivity extends Activity
             return;
         }
         
-        String text = generator.build(templateString,
+        if (currentSize == null || currentTemplate == null)
+        {
+            showToast(getString(R.string.message_invalid_size_or_template));
+            return;
+        }
+        
+        String text = generator.build(currentTemplate.getInner(),
                 currentSize == null ? sizeLabels[0] : currentSize);
+        text = currentTemplate.getOuter().replaceFirst("\\{\\}", text);
         
         textPhotos.setText(text);
         
@@ -231,6 +328,24 @@ public class PhotosetActivity extends Activity
     {
         textProgress.setVisibility(count == null ? View.GONE : View.VISIBLE);
         textProgress.setText(count == null ? "" : getString(R.string.progress_get_photos, count));
+    }
+    
+    private int getSizeLabelPos(String name)
+    {
+        int len = sizeLabels.length;
+        for (int i = 0; i < len; i++)
+            if (name.equals(sizeLabels[i]))
+                return i;
+        return -1;
+    }
+    
+    private int getTemplatePos(Template template)
+    {
+        int len = templates.size();
+        for (int i = 0; i < len; i++)
+            if (template.getId() == templates.get(i).getId())
+                return i;
+        return -1;
     }
     
     private void showToast(CharSequence msg)

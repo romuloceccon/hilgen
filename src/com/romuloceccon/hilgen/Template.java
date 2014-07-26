@@ -47,6 +47,40 @@ public class Template
         }
     }
     
+    public static Template getById(Context ctx, long id)
+    {
+        DatabaseOpenHelper helper = new DatabaseOpenHelper(ctx);
+        SQLiteDatabase sqlite = helper.getReadableDatabase();
+        try
+        {
+            String[] columns = { "id", "name", "outer", "inner" };
+            Cursor c = sqlite.query(TABLE_NAME, columns, "id = ?",
+                    new String[] { String.valueOf(id) }, null, null, null, "1");
+            try
+            {
+                c.moveToFirst();
+                
+                if (c.isAfterLast())
+                    return null;
+                
+                Template t = new Template();
+                t.id = c.getLong(c.getColumnIndexOrThrow("id"));
+                t.name = getStringValue(c, "name");
+                t.outer = getStringValue(c, "outer");
+                t.inner = getStringValue(c, "inner");
+                return t;
+            }
+            finally
+            {
+                c.close();
+            }
+        }
+        finally
+        {
+            sqlite.close();
+        }
+    }
+    
     public static void delete(Context ctx, List<Template> list, Template item)
     {
         if (!list.remove(item) || item.id == null)
@@ -77,10 +111,10 @@ public class Template
             return c.getString(i);
     }
     
-    private Long id;
-    private String name;
-    private String outer;
-    private String inner;
+    private Long id = null;
+    private String name = "";
+    private String outer = "";
+    private String inner = "";
     
     @Override
     public String toString()
@@ -88,9 +122,14 @@ public class Template
         return name;
     }
     
-    public boolean isNew()
+    public boolean isDefault()
     {
-        return id == null;
+        return id != null && id == 1;
+    }
+    
+    public Integer getId()
+    {
+        return id == null ? null : id.intValue();
     }
     
     public String getName()

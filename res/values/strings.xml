@@ -12,6 +12,7 @@
     <string name="button_templates">Templates&#8230;</string>
     <string name="button_new">New</string>
     <string name="button_save">Save</string>
+    <string name="button_delete">Delete</string>
     
     <string name="text_logged_out">Logged out</string>
     <string name="text_waiting_authentication">Waiting authentication&#8230;</string>
@@ -43,6 +44,10 @@
     <string name="message_finish_authentication_failed">Could not finish OAuth authentication</string>
     <string name="message_get_photosets_failed">Could not list photosets</string>
     <string name="message_get_photos_failed">Could not list photos</string>
+    <string name="message_deleted_template">Deleted template \"%1$s\"</string>
+    <string name="message_saved_template">Saved template \"%1$s\"</string>
+    <string name="message_cannot_delete_default">Cannot delete default template</string>
+    <string name="message_invalid_size_or_template">Invalid size or template selected</string>
     <string name="message_are_you_sure">Are you sure?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
@@ -56,7 +61,8 @@
     <string name="title_activity_photoset">Photoset %1$s: %2$s</string>
     <string name="title_activity_template">Template Editor</string>
     
-    <string name="template_html_img_default">&lt;a $U{{href=\"{}\"
+    <string name="template_default_outer">&lt;div&gt;{}&lt;/div&gt;</string>
+    <string name="template_default_inner">&lt;a $U{{href=\"{}\"
         }}$T{{title=\"{}\" }}&gt;&lt;img $S{{src=\"{}\"
         }}$W{{width=\"{}\" }}$H{{height=\"{}\" }}$T{{alt=\"{}\"
         }}/&gt;&lt;/a&gt;\n\n</string>

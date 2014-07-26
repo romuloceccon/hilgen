@@ -7,85 +7,113 @@
     android:focusableInTouchMode="true"
     tools:context="${relativePackage}.${activityClass}" >
 
-    <Spinner
-        android:id="@+id/spinner_name"
-        android:layout_width="250sp"
-        android:layout_height="wrap_content"
-        android:layout_margin="10sp" />
-       
-    <Button
-        android:id="@+id/button_new"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10sp"
-        android:text="@string/button_new" />
-    
-    <TextView
-        android:id="@+id/text_template"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10sp"
-        android:layout_marginRight="10sp"
-        android:layout_marginLeft="10sp"
-        android:text="@string/text_name"
-        android:textSize="14sp" />
-    
-    <EditText
-        android:id="@+id/edit_name"
-        android:layout_width="250sp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10sp"
-        android:layout_marginRight="10sp"
-        android:layout_marginLeft="10sp"
-        android:inputType="text" />
-    
-    <TextView
-        android:id="@+id/text_outer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10sp"
-        android:layout_marginRight="10sp"
-        android:layout_marginLeft="10sp"
-        android:text="@string/text_outer"
-        android:textSize="14sp" />
-    
-    <EditText
-        android:id="@+id/edit_outer"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10sp"
-        android:layout_marginRight="10sp"
-        android:layout_marginLeft="10sp"
-        android:inputType="textMultiLine|textNoSuggestions"
-        android:minLines="4"
-        android:maxLines="4" />
-
-    <TextView
-        android:id="@+id/text_inner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10sp"
-        android:layout_marginRight="10sp"
-        android:layout_marginLeft="10sp"
-        android:text="@string/text_inner"
-        android:textSize="14sp" />
+        android:orientation="horizontal" >
     
-    <EditText
-        android:id="@+id/edit_inner"
+	    <Spinner
+	        android:id="@+id/spinner_name"
+	        android:layout_width="250sp"
+	        android:layout_height="wrap_content"
+	        android:layout_margin="10sp" />
+	       
+	    <Button
+	        android:id="@+id/button_new"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_margin="10sp"
+	        android:text="@string/button_new" />
+	    
+	    <Button
+	        android:id="@+id/button_delete"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_margin="10sp"
+	        android:text="@string/button_delete" />
+	    
+    </LinearLayout>
+    
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10sp"
-        android:layout_marginRight="10sp"
-        android:layout_marginLeft="10sp"
-        android:inputType="textMultiLine|textNoSuggestions"
-        android:minLines="4"
-        android:maxLines="4" />
+        android:orientation="vertical" >
     
-    <Button
-        android:id="@+id/button_save"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10sp"
-        android:text="@string/button_save" />
+	    <LinearLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="vertical" >
+	    
+		    <TextView
+		        android:id="@+id/text_template"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_marginTop="10sp"
+		        android:layout_marginRight="10sp"
+		        android:layout_marginLeft="10sp"
+		        android:text="@string/text_name"
+		        android:textSize="14sp" />
+		    
+		    <EditText
+		        android:id="@+id/edit_name"
+		        android:layout_width="250sp"
+		        android:layout_height="wrap_content"
+		        android:layout_marginBottom="10sp"
+		        android:layout_marginRight="10sp"
+		        android:layout_marginLeft="10sp"
+		        android:inputType="text" />
+		    
+		    <TextView
+		        android:id="@+id/text_outer"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_marginTop="10sp"
+		        android:layout_marginRight="10sp"
+		        android:layout_marginLeft="10sp"
+		        android:text="@string/text_outer"
+		        android:textSize="14sp" />
+		    
+		    <EditText
+		        android:id="@+id/edit_outer"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:layout_marginBottom="10sp"
+		        android:layout_marginRight="10sp"
+		        android:layout_marginLeft="10sp"
+		        android:inputType="textMultiLine|textNoSuggestions"
+		        android:minLines="4"
+		        android:maxLines="4" />
+		
+		    <TextView
+		        android:id="@+id/text_inner"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_marginTop="10sp"
+		        android:layout_marginRight="10sp"
+		        android:layout_marginLeft="10sp"
+		        android:text="@string/text_inner"
+		        android:textSize="14sp" />
+		    
+		    <EditText
+		        android:id="@+id/edit_inner"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:layout_marginBottom="10sp"
+		        android:layout_marginRight="10sp"
+		        android:layout_marginLeft="10sp"
+		        android:inputType="textMultiLine|textNoSuggestions"
+		        android:minLines="4"
+		        android:maxLines="4" />
+		    
+		    <Button
+		        android:id="@+id/button_save"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_margin="10sp"
+		        android:text="@string/button_save" />
     
+        </LinearLayout>
+	
+    </ScrollView>
+		
 </LinearLayout>

@@ -26,34 +26,6 @@
         android:layout_margin="10sp"
         android:text="@string/button_templates" />
 
-    <TextView
-        android:id="@+id/text_template"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10sp"
-        android:layout_marginRight="10sp"
-        android:layout_marginLeft="10sp"
-        android:text="@string/text_inner"
-        android:textSize="14sp" />
-    
-    <EditText
-        android:id="@+id/edit_template"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10sp"
-        android:layout_marginRight="10sp"
-        android:layout_marginLeft="10sp"
-        android:inputType="textMultiLine|textNoSuggestions"
-        android:minLines="4"
-        android:maxLines="4" />
-
-    <Button
-        android:id="@+id/button_reset_template"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10sp"
-        android:text="@string/button_reset_template" />
-
     <Button
         android:id="@+id/button_get_photosets"
         android:layout_width="wrap_content"
