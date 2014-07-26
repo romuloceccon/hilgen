@@ -71,7 +71,8 @@ public class Authentication
         return oAuth;
     }
     
-    public String startAuthentication(String scheme)
+    public String startAuthentication(String scheme) throws IOException,
+            FlickrException
     {
         // We should allow starting the authentication process either in the
         // UNAUTHORIZED or REQUESTING_AUTHORIZATION states; otherwise we risk
@@ -85,31 +86,10 @@ public class Authentication
         OAuthToken oAuthToken;
         String result;
         
-        try
-        {
-            oAuthToken = oAuthApi.getRequestToken(callbackUrl);
-        }
-        catch (IOException e)
-        {
-            Log.w(TAG, e);
-            return null;
-        }
-        catch (FlickrException e)
-        {
-            Log.w(TAG, e);
-            return null;
-        }
+        oAuthToken = oAuthApi.getRequestToken(callbackUrl);
         
-        try
-        {
-            result = oAuthApi.buildAuthenticationUrl(
-                    Permission.READ, oAuthToken).toString();
-        }
-        catch (MalformedURLException e)
-        {
-            Log.w(TAG, e);
-            return null;
-        }
+        result = oAuthApi.buildAuthenticationUrl(
+                Permission.READ, oAuthToken).toString();
         
         String tokenSecret = oAuthToken.getOauthTokenSecret();
         
@@ -123,27 +103,14 @@ public class Authentication
         return result;
     }
     
-    public boolean finishAuthentication(String token, String verifier)
+    public boolean finishAuthentication(String token, String verifier) throws IOException, FlickrException
     {
         if (state != REQUESTING_AUTHORIZATION)
             return false;
         
         OAuth oAuth;
         
-        try
-        {
-            oAuth = oAuthApi.getAccessToken(token, oAuthTokenSecret, verifier);
-        }
-        catch (IOException e)
-        {
-            Log.w(TAG, e);
-            return false;
-        }
-        catch (FlickrException e)
-        {
-            Log.w(TAG, e);
-            return false;
-        }
+        oAuth = oAuthApi.getAccessToken(token, oAuthTokenSecret, verifier);
         
         User user = oAuth.getUser();
         OAuthToken oAuthToken = oAuth.getToken();

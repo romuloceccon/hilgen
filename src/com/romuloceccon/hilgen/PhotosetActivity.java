@@ -31,7 +31,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class PhotosetActivity extends Activity
 {
@@ -64,6 +63,8 @@ public class PhotosetActivity extends Activity
     
     private class GetPhotosTask extends AsyncTask<Void, Integer, Generator>
     {
+        private Exception error = null;
+        
         @Override
         protected Generator doInBackground(Void... params)
         {
@@ -126,16 +127,19 @@ public class PhotosetActivity extends Activity
             catch (IOException e)
             {
                 Log.w(TAG, e);
+                error = e;
                 return null;
             }
             catch (FlickrException e)
             {
                 Log.w(TAG, e);
+                error = e;
                 return null;
             }
             catch (JSONException e)
             {
                 Log.w(TAG, e);
+                error = e;
                 return null;
             }
             
@@ -146,7 +150,8 @@ public class PhotosetActivity extends Activity
         protected void onPostExecute(Generator result)
         {
             if (result == null)
-                showToast(getString(R.string.message_get_photos_failed));
+                ActivityUtils.showToast(PhotosetActivity.this,
+                        getString(R.string.message_get_photos_failed), error);
             
             generator = result;
             updateProgress(null);
@@ -306,7 +311,8 @@ public class PhotosetActivity extends Activity
         
         if (currentSize == null || currentTemplate == null)
         {
-            showToast(getString(R.string.message_invalid_size_or_template));
+            ActivityUtils.showToast(this,
+                    getString(R.string.message_invalid_size_or_template));
             return;
         }
         
@@ -321,7 +327,7 @@ public class PhotosetActivity extends Activity
         clipboard.setPrimaryClip(ClipData.newPlainText(
                 getString(R.string.label_clip_data_photo_list), text));
         
-        showToast(getString(R.string.clipboard_text_set));
+        ActivityUtils.showToast(this, getString(R.string.clipboard_text_set));
     }
     
     private void updateProgress(Integer count)
@@ -346,10 +352,5 @@ public class PhotosetActivity extends Activity
             if (template.getId() == templates.get(i).getId())
                 return i;
         return -1;
-    }
-    
-    private void showToast(CharSequence msg)
-    {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 }

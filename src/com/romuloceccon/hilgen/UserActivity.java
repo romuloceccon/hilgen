@@ -28,7 +28,6 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class UserActivity extends Activity
 {
@@ -45,10 +44,27 @@ public class UserActivity extends Activity
     
     private class OAuthStartAuthenticationTask extends AsyncTask<Void, Integer, String>
     {
+        private Exception error = null;
+        
         @Override
         protected String doInBackground(Void... params)
         {
-            return authentication.startAuthentication(SCHEME);
+            try
+            {
+                return authentication.startAuthentication(SCHEME);
+            }
+            catch (IOException e)
+            {
+                Log.w(TAG, e);
+                error = e;
+                return null;
+            }
+            catch (FlickrException e)
+            {
+                Log.w(TAG, e);
+                error = e;
+                return null;
+            }
         }
         
         @Override
@@ -56,7 +72,9 @@ public class UserActivity extends Activity
         {
             if (result == null)
             {
-                showToast(getString(R.string.message_start_authentication_failed));
+                ActivityUtils.showToast(UserActivity.this,
+                        getString(R.string.message_start_authentication_failed),
+                        error);
                 return;
             }
             
@@ -67,10 +85,27 @@ public class UserActivity extends Activity
     
     private class OAuthFinishAuthenticationTask extends AsyncTask<String, Integer, Boolean>
     {
+        private Exception error = null;
+        
         @Override
         protected Boolean doInBackground(String... params)
         {
-            return authentication.finishAuthentication(params[0], params[1]);
+            try
+            {
+                return authentication.finishAuthentication(params[0], params[1]);
+            }
+            catch (IOException e)
+            {
+                Log.w(TAG, e);
+                error = e;
+                return null;
+            }
+            catch (FlickrException e)
+            {
+                Log.w(TAG, e);
+                error = e;
+                return null;
+            }
         }
         
         @Override
@@ -78,7 +113,9 @@ public class UserActivity extends Activity
         {
             if (!result)
             {
-                showToast(getString(R.string.message_finish_authentication_failed));
+                ActivityUtils.showToast(UserActivity.this,
+                        getString(R.string.message_finish_authentication_failed),
+                        error);
                 return;
             }
             
@@ -88,6 +125,8 @@ public class UserActivity extends Activity
     
     private class GetPhotosetsTask extends AsyncTask<Void, Integer, List<Photoset>>
     {
+        private Exception error = null;
+        
         @Override
         protected List<Photoset> doInBackground(Void... arg0)
         {
@@ -129,16 +168,19 @@ public class UserActivity extends Activity
             catch (IOException e)
             {
                 Log.w(TAG, e);
+                error = e;
                 return null;
             }
             catch (FlickrException e)
             {
                 Log.w(TAG, e);
+                error = e;
                 return null;
             }
             catch (JSONException e)
             {
                 Log.w(TAG, e);
+                error = e;
                 return null;
             }
         }
@@ -147,7 +189,8 @@ public class UserActivity extends Activity
         protected void onPostExecute(List<Photoset> result)
         {
             if (result == null)
-                showToast(getString(R.string.message_get_photosets_failed));
+                ActivityUtils.showToast(UserActivity.this,
+                        getString(R.string.message_get_photosets_failed), error);
             
             updatePhotosetList(result);
         }
@@ -314,11 +357,6 @@ public class UserActivity extends Activity
         Intent intent = new Intent(getApplicationContext(), PhotosetActivity.class);
         intent.putExtra(PhotosetActivity.KEY_PHOTOSET, photoset);
         startActivity(intent);
-    }
-    
-    private void showToast(CharSequence msg)
-    {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
     
     private OnClickListener startAuthenticationAction = new OnClickListener()
