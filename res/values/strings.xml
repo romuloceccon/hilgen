@@ -27,19 +27,6 @@
         omitted. Otherwise the text is included in the output and \"{}\" will be
         replaced by \"X\"\'s value.</string>
     
-	<string name="radio_size_square">Square</string>
-	<string name="radio_size_large_square">Large square</string>
-	<string name="radio_size_thumbnail">Thumbnail</string>
-	<string name="radio_size_small">Small</string>
-	<string name="radio_size_small_320">Small 320</string>
-	<string name="radio_size_medium">Medium</string> 
-	<string name="radio_size_medium_640">Medium 640</string>
-	<string name="radio_size_medium_800">Medium 800</string>
-	<string name="radio_size_large">Large</string>
-	<string name="radio_size_large_1600">Large 1600</string>
-	<string name="radio_size_large_2048">Large 2048</string>
-	<string name="radio_size_original">Original</string>
-
     <string name="message_start_authentication_failed">Could not start OAuth authentication</string>
     <string name="message_finish_authentication_failed">Could not finish OAuth authentication</string>
     <string name="message_get_photosets_failed">Could not list photosets</string>
